@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ public class FriendsListActivity extends ListActivity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("pocketSteam - " + User.userName);
+		setTitle(getString(R.string.app_name) + " / Friends");
 		setContentView(R.layout.friends);
 		/*
 		OnItemClickListener clickListener = new OnItemClickListener() {
@@ -48,17 +47,6 @@ public class FriendsListActivity extends ListActivity {
 		FriendsAdapter adapter = new FriendsAdapter(this, R.layout.friend, friends);
 		setListAdapter(adapter);
 		//getListView().setOnItemClickListener(clickListener);
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	        moveTaskToBack(true);
-	        //TODO: Disconnect!
-	    	this.finish();
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
 	}
 	
 	public class SteamFriend {

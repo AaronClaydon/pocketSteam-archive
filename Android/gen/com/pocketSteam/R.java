@@ -14,6 +14,8 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
+        public static final int buttonFriends=0x7f05000a;
+        public static final int buttonSettings=0x7f05000b;
         public static final int icon=0x7f050000;
         public static final int loginButton=0x7f050008;
         public static final int passWord=0x7f050006;
@@ -29,14 +31,17 @@ public final class R {
         public static final int friend=0x7f030000;
         public static final int friends=0x7f030001;
         public static final int login=0x7f030002;
+        public static final int menu=0x7f030003;
     }
     public static final class string {
         public static final int CannotConnect=0x7f040009;
         public static final int Connecting=0x7f040007;
+        public static final int FriendsButton=0x7f04000b;
         public static final int InvalidDetails=0x7f040008;
         public static final int NoFriends=0x7f04000a;
         public static final int RememberMe=0x7f040005;
         public static final int SecureConnection=0x7f040006;
+        public static final int SettingsButton=0x7f04000c;
         public static final int app_name=0x7f040001;
         public static final int loginButton=0x7f040002;
         public static final int passWordText=0x7f040004;

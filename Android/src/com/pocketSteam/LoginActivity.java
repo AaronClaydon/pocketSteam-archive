@@ -19,7 +19,8 @@ public class LoginActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        
+        setTitle(getString(R.string.app_name) + " / Login");
+
         EditText userName = (EditText)this.findViewById(R.id.userName);
     	EditText passWord = (EditText)this.findViewById(R.id.passWord);
     	CheckBox rememberMeBox = (CheckBox)this.findViewById(R.id.rememberMe);
@@ -164,8 +165,8 @@ public class LoginActivity extends Activity {
         			}
         			catch(Exception ex) { }
         		}
-        		Intent friendsIntent = new Intent(LoginActivity.this, com.pocketSteam.FriendsListActivity.class);
-        		startActivity(friendsIntent);
+        		Intent menuIntent = new Intent(LoginActivity.this, com.pocketSteam.MenuActivity.class);
+        		startActivity(menuIntent);
         		LoginActivity.this.finish();
         	} else {
         		UnlockMenu();
