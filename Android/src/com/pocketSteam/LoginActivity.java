@@ -1,8 +1,11 @@
-package com.example.android.apis;
+package com.pocketSteam;
+import com.pocketSteam.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.*;
@@ -10,7 +13,7 @@ import android.widget.*;
 
 import java.io.*;
 
-public class PocketSteamAndroidActivity extends Activity {
+public class LoginActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,6 @@ public class PocketSteamAndroidActivity extends Activity {
 	        if(!pass.equals("")) {
 	        	passWord.setText(pass);
 	        	rememberMeBox.setChecked(true);
-	        	
 	        }
 	        
 	    	fileStream.close();
@@ -75,7 +77,8 @@ public class PocketSteamAndroidActivity extends Activity {
         	passWord = loginDetails[1];
         	
 			try {
-				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1]);
+				reply = "Success:rofl:what";
+				//reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1]);
 			} catch (Exception e) {
 				return null;
 			}
@@ -84,11 +87,14 @@ public class PocketSteamAndroidActivity extends Activity {
         }
         
         protected void onPreExecute() {
-        	connectingDialog = new AlertDialog.Builder(PocketSteamAndroidActivity.this)
+        	connectingDialog = ProgressDialog.show(LoginActivity.this,    
+                    "Please wait...", "Loging in to Steam", true);
+               /*     
+        	connectingDialog = new AlertDialog.Builder(LoginActivity.this)
             .setTitle(R.string.app_name)
             .setMessage(R.string.Connecting)
             .create();
-        	
+        	*/
         	connectingDialog.show();
         }
         
@@ -109,7 +115,7 @@ public class PocketSteamAndroidActivity extends Activity {
         	
         	if(result == null) {
         		UnlockMenu();
-        		new AlertDialog.Builder(PocketSteamAndroidActivity.this)
+        		new AlertDialog.Builder(LoginActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.CannotConnect)
                 .create().show();
@@ -119,13 +125,13 @@ public class PocketSteamAndroidActivity extends Activity {
         	String[] resultArray = result.split(":");
         	if(resultArray[0].equals("Invalid")) {
         		UnlockMenu();
-        		new AlertDialog.Builder(PocketSteamAndroidActivity.this)
+        		new AlertDialog.Builder(LoginActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.InvalidDetails)
                 .create().show();
         	} else if(resultArray[0].equals("SteamGuard")) {
         		UnlockMenu();
-        		new AlertDialog.Builder(PocketSteamAndroidActivity.this)
+        		new AlertDialog.Builder(LoginActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage("TEMP - SteamGuard not supported")
                 .create().show();
@@ -158,11 +164,12 @@ public class PocketSteamAndroidActivity extends Activity {
         			}
         			catch(Exception ex) { }
         		}
-        		setContentView(R.layout.main);
-            	setTitle("pocketSteam - " + User.userName);
+        		Intent friendsIntent = new Intent(LoginActivity.this, com.pocketSteam.FriendsListActivity.class);
+        		startActivity(friendsIntent);
+        		LoginActivity.this.finish();
         	} else {
         		UnlockMenu();
-        		new AlertDialog.Builder(PocketSteamAndroidActivity.this)
+        		new AlertDialog.Builder(LoginActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.CannotConnect)
                 .create().show();
