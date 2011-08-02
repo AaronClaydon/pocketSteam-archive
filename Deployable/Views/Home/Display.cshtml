@@ -1,0 +1,216 @@
+﻿@model Web.Models.Session
+
+@{
+    ViewBag.Title = "Display";
+}
+
+<script type="text/javascript">
+    var heartbeatTimer;
+    
+    var user_SteamName;
+    var user_SteamID;
+    var user_Avatar;
+    var user_State;
+
+    function escapeHTML(text) {
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    $(document).ready(function () {
+        LoadData();
+        ChangeTab("Info", 0);
+
+        $(".contentInfo form").live('submit', function () {
+            if ($("input[name=messageText]", this).attr('value').match(/^\s+$/) === null && $("input[name=messageText]", this).attr('value') != "") {
+                var type = 2;
+                var message = $("input[name=messageText]", this).attr('value');
+                message = message.replace(/</g, "&lt;");
+                $("input[name=messageText]", this).attr('value', message);
+                var splitMessage = $("input[name=messageText]", this).attr('value').split(' ');
+
+                if (splitMessage[0] == "/me") {
+                    $("input[name=messageText]").attr('value', $("input[name=messageText]").attr('value').replace('/me ', ''));
+                    type = 3;
+                }
+
+                if (type == 2) {
+                    AddToMessages($("input[name=messageTo]", this).attr('value'), user_SteamName, '<br /><b>You:</b> ' + $("input[name=messageText]", this).attr('value'));
+                } else {
+                    AddToMessages($("input[name=messageTo]", this).attr('value'), user_SteamName, '<br /><b>You</b> ' + $("input[name=messageText]", this).attr('value'));
+                }
+
+                var dataString = $(this).serialize();
+                SendCommand(type, dataString);
+            }
+            $("input[name=messageText]", this).attr('value', '');
+
+            return false;
+        });
+
+        heartbeatTimer = setInterval(function () {
+            LoadData();
+        }, 1500);
+    });
+
+    function SendCommand(type, dataString) {
+        dataString = dataString || "";
+
+        $.ajax({
+            type: 'POST',
+            url: '/AjaxCommand/@Model.SessionToken/' + type + '/',
+            data: dataString,
+            success: function (data) {
+                if (data != "OK") {
+                    alert('Unknown: ' + data);
+                }
+            },
+            error: function () {
+                alert('Error sending message');
+            }
+        });
+    }
+
+    function Disconnect() {
+        clearInterval(heartbeatTimer);
+        user_SteamID = undefined;
+        
+        SendCommand(1);
+        ChangeInfo(3);
+    }
+
+    function LoadData() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AjaxReply")/',
+            success: function (data) {
+                //alert('Return: ' + data)
+                var obj = jQuery.parseJSON(data);
+
+                ChangeInfo(obj.Status);
+
+                for (message in obj.Messages) {
+                    var msgType = obj.Messages[message].Type;
+                    var msg = jQuery.parseJSON(obj.Messages[message].MessageValue);
+
+                    if (msgType == 1) {
+                        user_SteamName = msg.SteamName;
+                        user_SteamID = msg.SteamID;
+                        user_Avatar = msg.AvatarURL;
+                        user_State = msg.State;
+                    } else if (msgType == 2) {
+                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '(' + msg.SteamID + ')</strong>: ' + msg.Message);
+                    } else if (msgType == 3) {
+                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '(' + msg.SteamID + ')</strong> ' + msg.Message);
+                    } else if (msgType == 4) {
+                        ChangeFriends(msg);
+                    } else {
+                        alert('unknown type');
+                    }
+                }
+            },
+            error: function (data) {
+                alert('ERROR ' + val);
+            }
+        });
+    }
+
+    function ChangeFriends(friends) {
+        $("#Friends").html("");
+        var amtOnline = 0;
+        var friendsCount = 0;
+        var friendsContent = "";
+
+        for (friendNum in friends) {
+            var display = true;
+            var friend = friends[friendNum];
+
+            var rawState = friend.State.split(' ');
+            var avatarState = "online";
+            if (friend.State == "Online" || friend.State == "Away" || friend.State == "Busy" || friend.State == "Snooze") {
+                avatarState = "online";
+            } else if (rawState[0] == "Playing") {
+                avatarState = "ingame";
+            } else {
+                avatarState = "offline";
+                display = false;
+            }
+            var id = friend.SteamID.split(':')[2];
+            if (display) {
+                friendsContent = friendsContent + '<a href="#" onClick="' + "ChangeTab('Chat" + id + "', '" + id + "', '" + friend.SteamName + "', '" + friend.SteamID + "')" + '"><div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"><b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div></a>';
+                amtOnline++;
+            }
+            friendsCount++;
+        }
+
+        $("#Friends").html("<div class='scrollBars'>" + friendsContent + "</div>");
+        $("#tabFriends li").text('Friends (' + amtOnline + '/' + friendsCount + ')');
+    }
+
+    function ChangeInfo(status) {
+        var statusText;
+        if (status == 1) {
+            statusText = "<font color='Blue'>Connecting....</font>";
+        } else if (status == 2) {
+            statusText = "<font color='Gren'>Connected</font>";
+        } else if (status == 3) {
+            statusText = "<font color='Red'>Disconnected</font>";
+        }
+
+        var info = "";
+        if (user_SteamID != undefined) {
+            info = '<img src="' + user_Avatar + '" alt="avatar"/>' + user_SteamName + ' (' + user_SteamID + ')<br/>' + user_State;
+        }
+
+        $("#Info").html(statusText + '<br />' + info + '<br /><a href="#" onClick="Disconnect()">Disconnect</a>');
+    }
+
+    function AddToMessages(steamid, name, message) {
+        var id = steamid.split(':')[2];
+        if(!$('.navigation #tabChat' + id).length) {
+            AddTab(steamid, name);
+        }
+        if (!$("#tabChat" + id + " li").hasClass('selected')) {
+            $("#tabChat" + id + " li").addClass('attention');
+        }
+        $(".container #Chat" + id + " .scrollBars").append(message);
+        $(".container #Chat" + id + " .scrollBars").attr({ scrollTop: $("body").attr("scrollHeight") });
+    }
+
+    function AddTab(steamid, name) {
+        var id = steamid.split(':')[2];
+        if(id != undefined && name != undefined) {
+            $(".navigation ul").append('<a href="#" id="tabChat' + id + '" onclick="' + "ChangeTab('Chat" + id + "')" + '"><li>' + name + '</li></a> ');
+            $(".container").append('<div class="contentInfo" id="Chat' + id + '"><div class="scrollBars"></div><form class="messageForm" id="' + id + '" action="#"><input type="text" maxlength="2048" size="106" name="messageText" autocomplete="off" /><input type="hidden" name="messageTo" value="' + steamid + '"/><input type="submit" value="Send" /></form></div>');
+        }
+    }
+
+    function ChangeTab(tab, id, name, steamid) {
+        if (!$('.navigation #tabChat' + id).length && id != 0 && steamid != undefined) {
+            AddTab(steamid, name);
+        }
+
+        $(".contentInfo").css('display', 'none');
+        $("#" + tab).css('display', 'inline');
+
+        $(".selected").removeClass('selected');
+        $("#tab" + tab + " li").removeClass('attention');
+        $("#tab" + tab + " li").addClass('selected');
+    }
+</script>
+
+<div class="navigation">
+	<ul>
+        <a href="#" id="tabInfo" onclick="ChangeTab('Info', 0, 0)"><li class="selected">Info</li></a>
+		<a href="#" id="tabFriends" onclick="ChangeTab('Friends', 0, 0)"><li>Friends</li></a>
+	</ul>	
+</div>
+<div class="container">
+    <div class="contentInfo" id="Info">
+		Loading.... INFO
+	</div>
+	<div class="contentInfo" id="Friends">
+        <div class="scrollBars">
+		    Loading friends....
+        </div>
+	</div>
+</div>

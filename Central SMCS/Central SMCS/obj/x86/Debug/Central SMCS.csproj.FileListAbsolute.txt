@@ -1,0 +1,6 @@
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\bin\Debug\Central SMCS.exe
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\bin\Debug\Central SMCS.pdb
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\obj\x86\Debug\Central SMCS.exe
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\obj\x86\Debug\Central SMCS.pdb
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Central SMCS\Central SMCS\bin\Debug\Central SMCS.exe.config

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/userNameText"></TextView>
+<EditText android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/userName">
+	<requestFocus></requestFocus>
+</EditText>
+<TextView android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/passWordText"></TextView>
+<EditText android:layout_height="wrap_content" android:layout_width="match_parent" android:inputType="textPassword" android:id="@+id/passWord"></EditText>
+<CheckBox android:text="@string/RememberMe" android:id="@+id/rememberMe" android:layout_width="wrap_content" android:layout_height="wrap_content"></CheckBox>
+<Button android:layout_height="wrap_content" android:text="@string/loginButton" android:id="@+id/loginButton" android:onClick="LoginButton" android:width="500px" android:layout_width="match_parent"></Button>
+<TextView android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:text="@string/SecureConnection"></TextView>
+</LinearLayout>

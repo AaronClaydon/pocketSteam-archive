@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="please_login">Welcome to pocketSteam, please login with your Steam account details below</string>
+    <string name="app_name">pocketSteam</string>
+    <string name="loginButton">Login To Steam</string>
+    <string name="userNameText">Username</string>
+    <string name="passWordText">Password</string>
+    <string name="RememberMe">Remember My Password</string>
+    <string name="SecureConnection">Your Steam Account credentials will be sent over a secure SSL connection</string>
+    <string name="Connecting">Connecting to pocketSteam</string>
+    <string name="InvalidDetails">Invalid username/password provided</string>
+    <string name="CannotConnect">There was an error while connecting to pocketSteam</string>
+</resources>

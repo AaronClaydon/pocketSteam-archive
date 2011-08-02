@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        EnableInputBoxes();
+        $("#javascriptWarning").css('display', 'none');
+
+        $(".loginButton").click(function () {
+            dataString = $(".loginForm").serialize();
+            DisableInputBoxes();
+            $("#notification").removeClass();
+            $("#notification").addClass('notice_box');
+            $("#notification").text('Autherising, please wait...');
+
+            $.ajax({
+                type: "POST",
+                data: dataString,
+                url: '@Url.Action("Login")',
+                success: function (data) {
+                    var splitData = data.split(':');
+
+
+                    if (splitData[0] == "SteamGuard") {
+                        $(".steamGuardKey").css('display', 'inline');
+
+                        $("#notification").removeClass();
+                        $("#notification").addClass('error_box');
+                        $("#notification").text('Please enter your Steam Guard key sent to your email account');
+                    } else if (splitData[0] == "Invalid") {
+                        $("#notification").removeClass();
+                        $("#notification").addClass('error_box');
+                        $("#notification").text('Invalid username and/or password');
+                    } else if (splitData[0] == "Success") {
+                        var gotoLocation = '@Url.Action("Display")' + "/" + splitData[1];
+
+                        document.cookie = "passkey=" + splitData[2];
+                        window.location.replace(gotoLocation);
+                    } else {
+                        alert('Return: ' + data);
+                    }
+
+                    EnableInputBoxes();
+                },
+                error: function (data) {
+                    alert('ERROR ' + val);
+                }
+            });
+
+            return false;
+        });
+    });
+
+    function DisableInputBoxes() {
+        $(".loginButton").attr('disabled', 'disabled');
+        $("input[name=userName]").attr('disabled', 'disabled');
+        $("input[name=passWord]").attr('disabled', 'disabled');
+        $("input[name=steamGuardAccessKey]").attr('disabled', 'disabled');
+    }
+
+    function EnableInputBoxes() {
+        $(".loginButton").attr('disabled', '');
+        $("input[name=userName]").attr('disabled', '');
+        $("input[name=passWord]").attr('disabled', '');
+        $("input[name=steamGuardAccessKey]").attr('disabled', '');
+    }
+</script>
+
+<div class="container">
+    <div class="error" id="javascriptWarning">It looks like your browser does not support Javascript or it has been disabled, this is a necessary feature for webSteam to work</div>
+    Welcome to pocketSteam, a web based client for talking to people on your Steam friends list. For more information visit the @Html.ActionLink("FAQ", "FAQ").<br />
+    <div class="notice_box" id="notification">Please login below with your Steam username and password, you may be required to enter a Steam Guard Key aswell</div>
+    <form method="post" action='#' class="loginForm">
+        <p>Username: <br /><input type="text" id="userName" name="userName" value="azzytest" disabled="disabled"/></p>
+        <p>Password: <br /><input type="password" id="passWord" name="passWord" value="test123" disabled="disabled"/></p>
+        <div class="steamGuardKey"><p>Steam Guard Access Code: <input type="text" id="steamGuardAccessKey" name="steamGuardAccessKey" value="" disabled="disabled"/></p></div>
+
+        <input type="submit" value="Login to your Steam account" class="loginButton" disabled="disabled"/>
+    </form>
+</div>
