@@ -167,6 +167,7 @@ public class LoginActivity extends Activity {
         			}
         			catch(Exception ex) { }
         		}
+        		API.connected = true;
         		Intent menuIntent = new Intent(LoginActivity.this, com.pocketSteam.MenuActivity.class);
         		startActivity(menuIntent);
         		LoginActivity.this.finish();

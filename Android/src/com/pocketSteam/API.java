@@ -9,6 +9,7 @@ public class API {
 	static String APIServer = "https://pocketsteam.com";
 	static String SessionToken = null;
 	static String PassKey = null;
+	static Boolean connected = false;
 	
 	 public static String Contact(String targetURL, String urlParameters) throws Exception
 	  {

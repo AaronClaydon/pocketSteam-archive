@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -14,47 +15,42 @@ import android.widget.Toast;
 
 public class FriendsListActivity extends ListActivity {
 	
+	static FriendsAdapter adapter;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(getString(R.string.app_name) + " / Friends");
 		setContentView(R.layout.friends);
-		/*
+
 		OnItemClickListener clickListener = new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View arg1, int position,
 					long arg3) {
-				Toast.makeText(getApplicationContext(), "Clicked on: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+				SteamFriend friend = (SteamFriend)parent.getItemAtPosition(position);
+				Toast.makeText(getApplicationContext(), "Clicked on: " + friend.SteamName, Toast.LENGTH_SHORT).show();
+				try {
+					API.Contact("/AjaxCommand/" + API.SessionToken + "/2", "messageTo=" + friend.SteamID + "&messageText=LOL I CLICKED ON U");
+				} catch (Exception e) { }
 			}
-		};	*/	
-		ArrayList<SteamFriend> friends = new ArrayList<SteamFriend>();
-		
-		SteamFriend friendAzzy = new SteamFriend();
-		friendAzzy.SteamName = "Azzy";
-		friendAzzy.State = "Online";
-		friends.add(friendAzzy);
-		
-		SteamFriend friendTrip = new SteamFriend();
-		friendTrip.SteamName = "Trippeh";
-		friendTrip.State = "Offline";
-		friends.add(friendTrip);
-		
-		SteamFriend friendQ = new SteamFriend();
-		friendQ.SteamName = "Qwerty";
-		friendQ.State = "Playing: Minecraft";
-		friends.add(friendQ);
-		
-		FriendsAdapter adapter = new FriendsAdapter(this, R.layout.friend, friends);
+		};
+		adapter = new FriendsAdapter(this, R.layout.friend, User.friends);
 		setListAdapter(adapter);
-		//getListView().setOnItemClickListener(clickListener);
+		getListView().setOnItemClickListener(clickListener);
 	}
 	
-	public class SteamFriend {
-		public String SteamName;
-		public String State;
+	@Override
+	public void onStart() {
+		super.onStart();
+		User.friendsListOpen = true;
+	}
+	@Override
+	public void onStop() {
+		super.onStart();
+		User.friendsListOpen = false;
 	}
 	
-	private class FriendsAdapter extends ArrayAdapter<SteamFriend> {
+	class FriendsAdapter extends ArrayAdapter<SteamFriend> {
 
         private ArrayList<SteamFriend> friends;
 
@@ -80,5 +76,5 @@ public class FriendsListActivity extends ListActivity {
                 }
                 return v;
         }
-}
+	}
 }

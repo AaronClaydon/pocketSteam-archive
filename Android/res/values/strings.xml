@@ -14,4 +14,6 @@
     <string name="FriendsButton">Friends</string>
     <string name="SettingsButton">Settings</string>
     <string name="PleaseWait">Please wait</string>
+    <string name="GettingData">Retrieving data from the server</string>
+    <string name="ConnectionExpired">Your connection has expired, please check  your network connectivity and login again</string>
 </resources>

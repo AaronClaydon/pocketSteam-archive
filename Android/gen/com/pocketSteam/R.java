@@ -37,7 +37,9 @@ public final class R {
     public static final class string {
         public static final int CannotConnect=0x7f040009;
         public static final int Connecting=0x7f040007;
+        public static final int ConnectionExpired=0x7f04000f;
         public static final int FriendsButton=0x7f04000b;
+        public static final int GettingData=0x7f04000e;
         public static final int InvalidDetails=0x7f040008;
         public static final int NoFriends=0x7f04000a;
         public static final int PleaseWait=0x7f04000d;
