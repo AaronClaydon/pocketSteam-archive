@@ -7,6 +7,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class API {
 	static String APIServer = "https://pocketsteam.com";
+	static String SessionToken = null;
+	static String PassKey = null;
 	
 	 public static String Contact(String targetURL, String urlParameters) throws Exception
 	  {
@@ -22,6 +24,7 @@ public class API {
 	      connection.setRequestProperty("Content-Length", "" + 
 	               Integer.toString(urlParameters.getBytes().length));
 	      connection.setRequestProperty("Content-Language", "en-US");  
+	      connection.addRequestProperty("Cookie", "passKey=" + PassKey);
 				
 	      connection.setUseCaches (false);
 	      connection.setDoInput(true);

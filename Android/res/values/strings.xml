@@ -13,4 +13,5 @@
     <string name="NoFriends">You currently have no Steam friends</string>
     <string name="FriendsButton">Friends</string>
     <string name="SettingsButton">Settings</string>
+    <string name="PleaseWait">Please wait</string>
 </resources>

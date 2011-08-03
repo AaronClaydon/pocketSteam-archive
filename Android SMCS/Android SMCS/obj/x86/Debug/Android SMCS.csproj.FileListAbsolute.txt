@@ -1,0 +1,5 @@
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Android SMCS\Android SMCS\bin\Debug\Android SMCS.exe
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Android SMCS\Android SMCS\bin\Debug\Android SMCS.pdb
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Android SMCS\Android SMCS\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Android SMCS\Android SMCS\obj\x86\Debug\Android SMCS.exe
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Android SMCS\Android SMCS\obj\x86\Debug\Android SMCS.pdb

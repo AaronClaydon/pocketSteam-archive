@@ -20,6 +20,7 @@ public final class R {
         public static final int loginButton=0x7f050008;
         public static final int passWord=0x7f050006;
         public static final int rememberMe=0x7f050007;
+        public static final int serverReturn=0x7f05000c;
         public static final int state=0x7f050002;
         public static final int steamName=0x7f050001;
         public static final int textView1=0x7f050003;
@@ -39,6 +40,7 @@ public final class R {
         public static final int FriendsButton=0x7f04000b;
         public static final int InvalidDetails=0x7f040008;
         public static final int NoFriends=0x7f04000a;
+        public static final int PleaseWait=0x7f04000d;
         public static final int RememberMe=0x7f040005;
         public static final int SecureConnection=0x7f040006;
         public static final int SettingsButton=0x7f04000c;

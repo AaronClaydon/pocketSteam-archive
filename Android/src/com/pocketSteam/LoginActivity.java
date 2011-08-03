@@ -78,8 +78,8 @@ public class LoginActivity extends Activity {
         	passWord = loginDetails[1];
         	
 			try {
-				reply = "Success:rofl:what";
-				//reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1]);
+				//reply = "Success:rofl:what";
+				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1] + "&steamGuardAccessKey=");
 			} catch (Exception e) {
 				return null;
 			}
@@ -89,7 +89,7 @@ public class LoginActivity extends Activity {
         
         protected void onPreExecute() {
         	connectingDialog = ProgressDialog.show(LoginActivity.this,    
-                    "Please wait...", "Loging in to Steam", true);
+        			getString(R.string.PleaseWait), getString(R.string.Connecting), true);
                /*     
         	connectingDialog = new AlertDialog.Builder(LoginActivity.this)
             .setTitle(R.string.app_name)
@@ -139,6 +139,8 @@ public class LoginActivity extends Activity {
         	} else if(resultArray[0].equals("Success")) {
         		UnlockMenu();
         		User.userName = userName;
+        		API.SessionToken = resultArray[1];
+        		API.PassKey = resultArray[2];
         		
         		try {
 	        		FileOutputStream fos = openFileOutput("pocketSteam_LastUsername", Context.MODE_PRIVATE);
