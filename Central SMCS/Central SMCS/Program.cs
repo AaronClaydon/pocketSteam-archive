@@ -48,7 +48,7 @@ namespace Central_SMCS
                         process.Start();
                         process.Close();
 
-                        Console.WriteLine(DateTime.Now + " | Started: " + session.Username);
+                        Console.WriteLine(DateTime.Now + "(" + session.DateCreated + ") | Started: " + session.Username);
 
                         db.NewSessions.DeleteObject(session);
                     }
