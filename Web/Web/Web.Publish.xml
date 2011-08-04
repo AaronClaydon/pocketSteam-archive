@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Deployable" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="Views/Home/Display.cshtml" publishTime="07/31/2011 16:45:09" />
+    <file relUrl="Views/Home/Display.cshtml" publishTime="08/04/2011 16:08:30" />
+    <file relUrl="App_Data/webSteam.mdf" publishTime="08/01/2011 18:06:59" />
     <file relUrl="Content/themes/base/images/ui-bg_glass_75_dadada_1x400.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/jquery-1.4.4-vsdoc.js" publishTime="07/18/2011 17:08:45" />
@@ -15,12 +16,11 @@
     <file relUrl="App_Data/webSteam_log.ldf" publishTime="08/01/2011 18:07:00" />
     <file relUrl="Scripts/MicrosoftMvcValidation.debug.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="Scripts/MicrosoftMvcAjax.debug.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="bin/protobuf-net.pdb" publishTime="07/17/2011 17:32:10" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="bin/Web.dll" publishTime="08/01/2011 20:10:48" />
+    <file relUrl="bin/Web.dll" publishTime="08/04/2011 15:32:57" />
     <file relUrl="Scripts/jquery-1.4.4.js" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="Scripts/jquery-ui.min.js" publishTime="07/18/2011 17:08:45" />
+    <file relUrl="Content/themes/base/images/ui-bg_glass_65_ffffff_1x400.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/themes/base/images/ui-icons_222222_256x240.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Views/Home/FAQ.cshtml" publishTime="08/01/2011 13:51:51" />
     <file relUrl="Scripts/jquery-1.4.4.min.js" publishTime="07/18/2011 17:08:45" />
@@ -28,25 +28,25 @@
     <file relUrl="Content/themes/base/images/ui-icons_454545_256x240.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Views/Home/Index.cshtml" publishTime="07/27/2011 17:45:27" />
     <file relUrl="Content/themes/base/jquery-ui.css" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="bin/Newtonsoft.Json.Net35.dll" publishTime="04/23/2011 13:29:32" />
-    <file relUrl="Content/themes/base/images/ui-bg_glass_65_ffffff_1x400.png" publishTime="07/18/2011 17:08:45" />
+    <file relUrl="bin/SteamKit2.dll" publishTime="07/17/2011 17:32:13" />
+    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="07/18/2011 17:08:45" />
+    <file relUrl="Scripts/MicrosoftMvcAjax.debug.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Views/Shared/Error.cshtml" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/jquery.validate.unobtrusive.js" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="bin/Web.pdb" publishTime="08/01/2011 20:10:48" />
     <file relUrl="bin/Classless.Hasher.dll" publishTime="07/17/2011 00:25:54" />
-    <file relUrl="Views/Shared/_Layout.cshtml" publishTime="07/27/2011 17:54:48" />
+    <file relUrl="Views/Shared/_Layout.cshtml" publishTime="08/04/2011 15:37:45" />
     <file relUrl="Content/img/background.png" publishTime="07/22/2011 18:27:39" />
     <file relUrl="bin/protobuf-net.dll" publishTime="07/17/2011 17:32:12" />
     <file relUrl="Content/themes/base/images/ui-icons_cd0a0a_256x240.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/img/custombutton.png" publishTime="07/22/2011 18:27:39" />
-    <file relUrl="Scripts/jquery.unobtrusive-ajax.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/jquery-ui.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="bin/Newtonsoft.Json.Net35.xml" publishTime="04/23/2011 13:29:32" />
     <file relUrl="Content/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/jquery.validate.js" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="App_Data/webSteam.mdf" publishTime="08/01/2011 18:06:59" />
-    <file relUrl="bin/SteamKit2.dll" publishTime="07/17/2011 17:32:13" />
+    <file relUrl="bin/Newtonsoft.Json.Net35.dll" publishTime="04/23/2011 13:29:32" />
+    <file relUrl="Views/Web.config" publishTime="07/20/2011 21:55:06" />
+    <file relUrl="Scripts/jquery-ui.min.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/themes/base/images/ui-icons_888888_256x240.png" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/Site.css" publishTime="07/25/2011 17:52:34" />
@@ -54,10 +54,10 @@
     <file relUrl="bin/protobuf-net.xml" publishTime="07/17/2011 17:32:10" />
     <file relUrl="bin/Newtonsoft.Json.Net35.pdb" publishTime="04/23/2011 13:29:32" />
     <file relUrl="Content/themes/base/images/ui-bg_flat_75_ffffff_40x100.png" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="07/18/2011 17:08:45" />
+    <file relUrl="Scripts/jquery.unobtrusive-ajax.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Scripts/jquery.validate.unobtrusive.min.js" publishTime="07/18/2011 17:08:45" />
     <file relUrl="Content/themes/base/images/ui-icons_2e83ff_256x240.png" publishTime="07/18/2011 17:08:45" />
-    <file relUrl="Views/Web.config" publishTime="07/20/2011 21:55:06" />
+    <file relUrl="bin/Web.pdb" publishTime="08/04/2011 15:32:56" />
     <file relUrl="Web.config" publishTime="07/31/2011 16:39:33" />
   </publishProfile>
 </publishData>

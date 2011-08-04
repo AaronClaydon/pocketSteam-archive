@@ -192,6 +192,11 @@
         $(".contentInfo").css('display', 'none');
         $("#" + tab).css('display', 'inline');
 
+        if (tab != 'Info' && tab != 'Friends') {
+            var height = $("#" + tab + " .scrollBars").attr("scrollHeight");
+            $("#" + tab + " .scrollBars").attr("scrollTop", height);
+        }
+
         $(".selected").removeClass('selected');
         $("#tab" + tab + " li").removeClass('attention');
         $("#tab" + tab + " li").addClass('selected');
