@@ -6,9 +6,6 @@ C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\obj\Deb
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\SteamKit2.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\protobuf-net.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\Classless.Hasher.dll
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\SteamKit2.pdb
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\protobuf-net.pdb
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\protobuf-net.xml
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\Newtonsoft.Json.Net35.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\Newtonsoft.Json.Net35.pdb
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Web\Web\bin\Newtonsoft.Json.Net35.xml

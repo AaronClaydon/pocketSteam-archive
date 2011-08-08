@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,13 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.login);
         setTitle(getString(R.string.app_name) + " / Login");
 
+        if(API.connected) {
+        	Intent menuIntent = new Intent(LoginActivity.this, com.pocketSteam.MenuActivity.class);
+    		startActivity(menuIntent);
+
+    		LoginActivity.this.finish();
+        }
+        
         EditText userName = (EditText)this.findViewById(R.id.userName);
     	EditText passWord = (EditText)this.findViewById(R.id.passWord);
     	CheckBox rememberMeBox = (CheckBox)this.findViewById(R.id.rememberMe);
@@ -63,23 +71,25 @@ public class LoginActivity extends Activity {
     	loginButton.setEnabled(false);
     	rememberMeBox.setEnabled(false);
     	
-    	new LoginTask().execute(userName.getText().toString(), passWord.getText().toString());
+    	new LoginTask().execute(userName.getText().toString(), passWord.getText().toString(), "");
     }
     
     private class LoginTask extends AsyncTask<String, Void, String> {
     	AlertDialog connectingDialog;
     	String userName = null;
     	String passWord = null;
+    	String steamGuardKey = null;
     	
         protected String doInBackground(String... loginDetails) {
         	String reply = null;
         	
         	userName = loginDetails[0];
         	passWord = loginDetails[1];
+        	steamGuardKey = loginDetails[2];
         	
 			try {
 				//reply = "Success:rofl:what";
-				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1] + "&steamGuardAccessKey=");
+				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1] + "&steamGuardAccessKey=" + steamGuardKey);
 			} catch (Exception e) {
 				return null;
 			}
@@ -131,11 +141,23 @@ public class LoginActivity extends Activity {
                 .setMessage(R.string.InvalidDetails)
                 .create().show();
         	} else if(resultArray[0].equals("SteamGuard")) {
-        		UnlockMenu();
+        		//UnlockMenu();
+        		
+        		final EditText input = new EditText(getApplicationContext());
+        		
         		new AlertDialog.Builder(LoginActivity.this)
-                .setTitle(R.string.app_name)
-                .setMessage("TEMP - SteamGuard not supported")
-                .create().show();
+        	    .setTitle(R.string.SteamGuard)
+        	    .setMessage(R.string.SteamGuardPleaseEnter)
+        	    .setView(input)
+        	    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        	        public void onClick(DialogInterface dialog, int whichButton) {
+        	            new LoginTask().execute(userName, passWord, input.getText().toString());
+        	        }
+        	    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	        public void onClick(DialogInterface dialog, int whichButton) {
+        	            // Do nothing.
+        	        }
+        	    }).show();
         	} else if(resultArray[0].equals("Success")) {
         		UnlockMenu();
         		User.userName = userName;

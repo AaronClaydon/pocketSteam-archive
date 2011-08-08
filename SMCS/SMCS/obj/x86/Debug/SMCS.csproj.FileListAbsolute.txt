@@ -4,9 +4,6 @@ C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\D
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SteamKit2.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\protobuf-net.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Classless.Hasher.dll
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SteamKit2.pdb
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\protobuf-net.pdb
-C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\protobuf-net.xml
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\obj\x86\Debug\SMCS.exe
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\obj\x86\Debug\SMCS.pdb
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe.config

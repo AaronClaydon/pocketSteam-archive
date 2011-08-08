@@ -98,11 +98,12 @@ namespace SMCS
         public static void ShutDown(string reason)
         {
             Console.WriteLine("END: " + reason);
+            /*
             System.IO.TextWriter tr = new System.IO.StreamWriter("debug.txt");
             tr.WriteLine(reason);
             Thread.Sleep(100);
             tr.Close();
-
+            */
             Session session = db.Sessions.Single(d => d.SessionToken == Program.sessionToken);
 
             Steam3.Shutdown();

@@ -16,4 +16,8 @@
     <string name="PleaseWait">Please wait</string>
     <string name="GettingData">Retrieving data from the server</string>
     <string name="ConnectionExpired">Your connection has expired, please check  your network connectivity and login again</string>
+    <string name="SteamGuard">SteamGuard</string>
+    <string name="SteamGuardPleaseEnter">Please enter your Steam Guard key sent that was sent to your email account</string>
+    <string name="DisconnectButton">Disconnect</string>
+    <string name="SendMessage">Send</string>
 </resources>

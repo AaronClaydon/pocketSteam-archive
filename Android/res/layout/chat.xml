@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:weightSum="1">
+    <TableLayout android:layout_height="wrap_content" android:id="@+id/tableLayout1" android:layout_width="match_parent">
+        <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <ImageView android:src="@drawable/icon" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/imageView1"></ImageView>
+            <TableRow android:id="@+id/tableRow5" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/linearLayout1">
+                    <TextView android:text="[NAME]" android:id="@+id/ChatSteamName" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+                    <TextView android:text="[STATE]" android:id="@+id/ChatState" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#666666"></TextView>
+                </LinearLayout>
+            </TableRow>
+        </TableRow>
+    </TableLayout>
+    <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:text="TextView" android:layout_width="match_parent" android:layout_weight="1.01"></TextView>
+    <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="match_parent">
+        <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/ChatMessage" android:layout_weight="1">
+            <requestFocus></requestFocus>
+        </EditText>
+        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/button1" android:text="@string/SendMessage" android:onClick="SendMessage"></Button>
+    </LinearLayout>
+    
+</LinearLayout>

@@ -7,9 +7,12 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class API {
 	static String APIServer = "https://pocketsteam.com";
+	static int VERSION = 10;
+	
 	static String SessionToken = null;
 	static String PassKey = null;
 	static Boolean connected = false;
+	static Boolean Started = false;
 	
 	 public static String Contact(String targetURL, String urlParameters) throws Exception
 	  {

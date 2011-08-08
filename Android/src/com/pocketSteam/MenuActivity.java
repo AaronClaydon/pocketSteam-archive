@@ -2,7 +2,6 @@ package com.pocketSteam;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.pocketSteam.gson.Gson;
 import com.pocketSteam.gson.reflect.TypeToken;
@@ -13,10 +12,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 public class MenuActivity extends Activity {	
 	
@@ -47,11 +44,19 @@ public class MenuActivity extends Activity {
 		Intent friendsIntent = new Intent(MenuActivity.this, com.pocketSteam.FriendsListActivity.class);
         startActivity(friendsIntent);
 	}
-	
 	public void SettingsButton(View view) {
 
 	}
-	
+	public void DisconnectButton(View view) {
+		moveTaskToBack(true);
+        //TODO: Disconnect!
+        API.connected = false;
+        try {
+			API.Contact("/AjaxCommand/" + API.SessionToken + "/1", "");
+		} catch (Exception e) { }
+    	this.finish();
+	}
+	/*
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -66,7 +71,7 @@ public class MenuActivity extends Activity {
 	    }
 	    return super.onKeyDown(keyCode, event);
 	}
-	
+	*/
 	private class BackgroundTask extends AsyncTask<Void, Void, String> {
 
 		@Override
@@ -94,30 +99,47 @@ public class MenuActivity extends Activity {
 			}
 			
 			if(result != null) {
+				Button enableButtons;
+				enableButtons = (Button)findViewById(R.id.buttonFriends);
+				
 				if(connectingDialog == null && result.Status == 1) {
 					connectingDialog = ProgressDialog.show(MenuActivity.this,    
 		        						getString(R.string.PleaseWait), getString(R.string.GettingData), true);
-				} else if(connectingDialog != null && result.Status != 1) {
+				} else if(connectingDialog != null && result.Status != 1 && User.Data != null) {
 					connectingDialog.cancel();
 					connectingDialog = null;
 					
-					Button enableButtons;
-					enableButtons = (Button)findViewById(R.id.buttonFriends);
 					enableButtons.setEnabled(true);
 					enableButtons = (Button)findViewById(R.id.buttonSettings);
+					enableButtons.setEnabled(true);
+					enableButtons = (Button)findViewById(R.id.buttonDisconnect);
+					enableButtons.setEnabled(true);
+					
+					API.Started = true;
+				}
+				if(API.Started = true && !enableButtons.isEnabled() && result.Status != 1 && User.Data != null) {
+					enableButtons.setEnabled(true);
+					enableButtons = (Button)findViewById(R.id.buttonSettings);
+					enableButtons.setEnabled(true);
+					enableButtons = (Button)findViewById(R.id.buttonDisconnect);
 					enableButtons.setEnabled(true);
 				}
 			}
 			
 			for(Message msg : result.Messages) {
-				if(msg.Type == 4) {
-					Type collectionType = new TypeToken<ArrayList<SteamFriend>>(){}.getType();
-					ArrayList<SteamFriend> friends = gson.fromJson(msg.MessageValue, collectionType);
+				if(msg.Type == 1) {
+					SteamUserData userData = gson.fromJson(msg.MessageValue, SteamUserData.class);
+					
+					User.Data = userData;
+				}
+				else if(msg.Type == 4) {
+					Type collectionType = new TypeToken<ArrayList<SteamUserData>>(){}.getType();
+					ArrayList<SteamUserData> friends = gson.fromJson(msg.MessageValue, collectionType);
 					
 					User.friends = friends;
 					if(User.friendsListOpen) {
 						FriendsListActivity.adapter.clear();
-						for(SteamFriend friend : User.friends) {
+						for(SteamUserData friend : User.friends) {
 							FriendsListActivity.adapter.add(friend);
 						}
 					}
