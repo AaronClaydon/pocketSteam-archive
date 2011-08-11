@@ -20,4 +20,6 @@
     <string name="SteamGuardPleaseEnter">Please enter your Steam Guard key sent that was sent to your email account</string>
     <string name="DisconnectButton">Disconnect</string>
     <string name="SendMessage">Send</string>
+    <string name="ChatLogsButton">Chat Logs</string>
+    <string name="UpdateAvailable">Your pocketSteam App is out of date, please update it using the Android Market</string>
 </resources>

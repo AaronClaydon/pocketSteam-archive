@@ -68,7 +68,7 @@ namespace SMCS
         {
             string hashStr = BitConverter.ToString( AvatarHash ).Replace( "-", "" ).ToLower();
             string hashPrefix = hashStr.Substring( 0, 2 );
-            string downloadUri = string.Format(AvatarRoot + AvatarSmall, hashPrefix, hashStr);
+            string downloadUri = string.Format(AvatarRoot + AvatarMedium, hashPrefix, hashStr);
 
             return downloadUri;
         }
@@ -150,7 +150,7 @@ namespace SMCS
                 var callBack = data.callback;
 
 
-                string downloadUri = string.Format( AvatarRoot + AvatarSmall, hashPrefix, hashStr );
+                string downloadUri = string.Format( AvatarRoot + AvatarMedium, hashPrefix, hashStr );
                 string localFile = Path.Combine( localPath, hashStr + ".jpg" );
 
                 using ( WebClient client = new WebClient() )

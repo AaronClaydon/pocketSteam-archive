@@ -7,6 +7,7 @@ using SteamKit2;
 using System.Threading;
 using Web.Models;
 using Newtonsoft.Json;
+using System.Configuration;
 //using System.Diagnostics;
 
 namespace Web.Controllers
@@ -29,8 +30,14 @@ namespace Web.Controllers
             return View();
         }
         
-        public ActionResult Login(string userName, string passWord, string steamGuardAccessKey)
+        public ActionResult Login(string userName, string passWord, string steamGuardAccessKey, string AndroidVersion)
         {
+            if (AndroidVersion != null)
+            {
+                if (AndroidVersion != ConfigurationManager.AppSettings["AndroidVersion"])
+                    return Content("Update");
+            }
+
             ClientTGT clientTgt;
             byte[] serverTgt;
             AuthBlob accRecord;

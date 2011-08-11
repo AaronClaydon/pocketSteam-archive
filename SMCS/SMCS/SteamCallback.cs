@@ -74,8 +74,32 @@ namespace SMCS
                         
                         string playerState = Steam3.SteamFriends.GetFriendPersonaState(friendID).ToString();
                         string gamePlayedName = Steam3.SteamFriends.GetFriendGamePlayedName(friendID);
+
+                        int stateID = 99;
+                        switch (Steam3.SteamFriends.GetFriendPersonaState(friendID))
+                        {
+                            case EPersonaState.Online:
+                                stateID = 2;
+                                break;
+                            case EPersonaState.Away:
+                                stateID = 3;
+                                break;
+                            case EPersonaState.Busy:
+                                stateID = 4;
+                                break;
+                            case EPersonaState.Snooze:
+                                stateID = 5;
+                                break;
+                            case EPersonaState.Offline:
+                                stateID = 6;
+                                break;
+                        }
+
                         if (!String.IsNullOrEmpty(gamePlayedName))
+                        {
                             playerState = "Playing " + gamePlayedName;
+                            stateID = 1;
+                        }
                         else
                             playerState = Steam3.SteamFriends.GetFriendPersonaState(friendID).ToString();
 
@@ -84,13 +108,14 @@ namespace SMCS
                             SteamID = friendID.ToString(),
                             SteamName = Steam3.SteamFriends.GetFriendPersonaName(friendID),
                             AvatarURL = avatarUrl,
-                            State = playerState
+                            State = playerState,
+                            StateID = stateID
                         };
 
                         //friends.Add(friendID.ToString(), messageObject);
                         friends.Add(messageObject);
                     }
-                    friends = friends.OrderBy(d => d.SteamName).ToList();
+                    friends = friends.OrderBy(d => d.StateID).ThenBy(d => d.SteamName).ToList();
                     string messageJson = JsonConvert.SerializeObject(friends);
 
                     Message message = new Message

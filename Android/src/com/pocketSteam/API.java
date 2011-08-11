@@ -5,6 +5,13 @@ import java.net.*;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 public class API {
 	static String APIServer = "https://pocketsteam.com";
 	static int VERSION = 10;
@@ -53,4 +60,16 @@ public class API {
 	      connection.disconnect();
 	      return response.toString();
 	  }
+	 
+	 public static Drawable DownloadImage(String targetURL) throws Exception
+	 {
+		 URI URL = new URI(targetURL);
+		 DefaultHttpClient httpClient = new DefaultHttpClient();
+	     HttpGet request = new HttpGet(URL);
+	     HttpResponse response = httpClient.execute(request);
+	     InputStream stream = response.getEntity().getContent();
+	     
+	     Drawable drawable = Drawable.createFromStream(stream, "src");
+	     return drawable;
+	 }
 }

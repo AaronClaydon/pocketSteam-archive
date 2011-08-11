@@ -28,7 +28,7 @@ public class LoginActivity extends Activity {
 
     		LoginActivity.this.finish();
         }
-        
+
         EditText userName = (EditText)this.findViewById(R.id.userName);
     	EditText passWord = (EditText)this.findViewById(R.id.passWord);
     	CheckBox rememberMeBox = (CheckBox)this.findViewById(R.id.rememberMe);
@@ -89,7 +89,7 @@ public class LoginActivity extends Activity {
         	
 			try {
 				//reply = "Success:rofl:what";
-				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1] + "&steamGuardAccessKey=" + steamGuardKey);
+				reply = API.Contact("/Home/Login/", "userName=" + loginDetails[0] + "&passWord=" + loginDetails[1] + "&steamGuardAccessKey=" + steamGuardKey + "&AndroidVersion=" + API.VERSION);
 			} catch (Exception e) {
 				return null;
 			}
@@ -140,6 +140,12 @@ public class LoginActivity extends Activity {
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.InvalidDetails)
                 .create().show();
+        	} else if(resultArray[0].equals("Update")) {
+        		UnlockMenu();
+        		new AlertDialog.Builder(LoginActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.UpdateAvailable)
+                .create().show();
         	} else if(resultArray[0].equals("SteamGuard")) {
         		//UnlockMenu();
         		
@@ -155,7 +161,7 @@ public class LoginActivity extends Activity {
         	        }
         	    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
         	        public void onClick(DialogInterface dialog, int whichButton) {
-        	            // Do nothing.
+        	        	UnlockMenu();
         	        }
         	    }).show();
         	} else if(resultArray[0].equals("Success")) {

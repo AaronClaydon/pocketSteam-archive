@@ -96,21 +96,24 @@ namespace Web
                 }
                 else if (logOnResp.Result == EResult.AccountLogonDenied || logOnResp.Result == EResult.InvalidLoginAuthCode)
                 {
+                    Steam3.Shutdown();
                     Waiting = false;
                     Return = "SteamGuard";
-                    Steam3.Shutdown();
+                    Steam3.RemoveHandler(this);
                 }
                 else if (logOnResp.Result == EResult.AlreadyLoggedInElsewhere)
                 {
+                    Steam3.Shutdown();
                     Waiting = false;
                     Return = "LoggedInElsewhere";
-                    Steam3.Shutdown();
+                    Steam3.RemoveHandler(this);
                 }
                 else if (logOnResp.Result != EResult.OK)
                 {
+                    Steam3.Shutdown();
                     Waiting = false;
                     Return = "UnknownConnectFail " + logOnResp.Result;
-                    Steam3.Shutdown();
+                    Steam3.RemoveHandler(this);
                 }
             }
         }

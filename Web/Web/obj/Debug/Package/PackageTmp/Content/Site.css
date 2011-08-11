@@ -162,6 +162,11 @@ a:hover {
 .contentInfo {
 	display: none;
 }
+
+.contentInfo img {
+	width: 32px;
+	height: 32px;
+}
 /*
 .contentInfo input[type=submit] {
     min-width: 50px;

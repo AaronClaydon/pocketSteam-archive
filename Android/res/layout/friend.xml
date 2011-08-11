@@ -5,7 +5,7 @@
     android:padding="6dip">
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/steamAvatar"
 
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"

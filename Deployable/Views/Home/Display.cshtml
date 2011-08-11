@@ -135,8 +135,8 @@
                 display = false;
             }
             var id = friend.SteamID.split(':')[2];
-            if (display) {
-                friendsContent = friendsContent + '<a href="#" onClick="' + "ChangeTab('Chat" + id + "', '" + id + "', '" + friend.SteamName + "', '" + friend.SteamID + "')" + '"><div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"><b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div></a>';
+            friendsContent = friendsContent + '<a href="#" onClick="' + "ChangeTab('Chat" + id + "', '" + id + "', '" + friend.SteamName + "', '" + friend.SteamID + "')" + '"><div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"><b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div></a>';
+            if(display) {
                 amtOnline++;
             }
             friendsCount++;

@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class FriendsListActivity extends ListActivity {
 	
 	static FriendsAdapter adapter;
+	static Intent friendChatIntent;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,26 +38,27 @@ public class FriendsListActivity extends ListActivity {
 			}
 			*/
 			public void onItemClick(AdapterView<?> parent, View arg1, int position, long arg3) {
-				SteamUserData friend = (SteamUserData)parent.getItemAtPosition(position);
+				SteamUserData friend = adapter.friends.get(position);
 				
-				Intent friendChatIntent = new Intent(FriendsListActivity.this, com.pocketSteam.FriendChatActivity.class);
-				friendChatIntent.putExtra("SteamID", friend.SteamID);
-				friendChatIntent.putExtra("SteamName", friend.SteamName);
-				friendChatIntent.putExtra("SteamState", friend.State);
-				friendChatIntent.putExtra("SteamAvatar", friend.AvatarURL);
-				
-		        startActivity(friendChatIntent);
+				if(!friend.State.equals("Offline")) {
+					friendChatIntent = new Intent(FriendsListActivity.this, com.pocketSteam.FriendChatActivity.class);
+					friendChatIntent.putExtra("SteamID", friend.SteamID);
+					
+			        startActivity(friendChatIntent);
+				}
 			}
 		};
 		adapter = new FriendsAdapter(this, R.layout.friend, User.friends);
 		setListAdapter(adapter);
 		getListView().setOnItemClickListener(clickListener);
+		User.friendsListOpen = true;
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
 		User.friendsListOpen = true;
+		adapter.notifyDataSetChanged();
 	}
 	@Override
 	public void onStop() {
@@ -65,13 +68,13 @@ public class FriendsListActivity extends ListActivity {
 	
 	class FriendsAdapter extends ArrayAdapter<SteamUserData> {
 
-        private ArrayList<SteamUserData> friends;
+        public ArrayList<SteamUserData> friends;
 
         public FriendsAdapter(Context context, int textViewResourceId, ArrayList<SteamUserData> friends) {
                 super(context, textViewResourceId, friends);
                 this.friends = friends;
         }
-
+        
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
                 View v = convertView;
@@ -86,6 +89,16 @@ public class FriendsListActivity extends ListActivity {
                         
                         userNameView.setText(friend.SteamName);
                         stateView.setText(friend.State);
+                        
+                        if(friend.Avatar != null) {
+                        	ImageView image = (ImageView)v.findViewById(R.id.steamAvatar);
+                        	image.setImageDrawable(friend.Avatar);
+                        	
+                        	image.setMinimumWidth(32);
+                        	image.setMinimumHeight(32);
+                        	image.setMaxWidth(32);
+                        	image.setMaxHeight(32);
+                        }
                 }
                 return v;
         }

@@ -5,6 +5,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent" android:weightSum="1">
     <Button android:layout_height="wrap_content" android:text="@string/FriendsButton" android:id="@+id/buttonFriends" android:layout_width="match_parent" android:onClick="FriendsButton" android:layout_marginTop="5dp" android:enabled="false"></Button>
+    <Button android:onClick="ChatLogsButton" android:layout_height="wrap_content" android:id="@+id/buttonChatLogs" android:text="@string/ChatLogsButton" android:layout_width="match_parent" android:enabled="false"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/SettingsButton" android:id="@+id/buttonSettings" android:layout_width="match_parent" android:onClick="SettingsButton" android:enabled="false"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/DisconnectButton" android:id="@+id/buttonDisconnect" android:layout_width="match_parent" android:onClick="DisconnectButton" android:enabled="false"></Button>
 </LinearLayout>

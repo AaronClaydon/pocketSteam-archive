@@ -8,4 +8,5 @@ public class User {
 	static ArrayList<SteamUserData> friends = new ArrayList<SteamUserData>();
 	
 	static Boolean friendsListOpen = false;
+	static Boolean chatOpen = false;
 }

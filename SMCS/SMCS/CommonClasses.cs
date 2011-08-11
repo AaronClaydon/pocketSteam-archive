@@ -23,6 +23,7 @@ namespace SMCS
         public string SteamID;
         public string SteamName;
         public string AvatarURL;
+        public int StateID;
         public string State;
     }
 }
