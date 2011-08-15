@@ -1,6 +1,5 @@
 package com.pocketSteam;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public class SteamUserData {

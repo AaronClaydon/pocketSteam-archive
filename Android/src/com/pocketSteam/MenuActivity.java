@@ -3,8 +3,6 @@ package com.pocketSteam;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Type;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 import com.pocketSteam.gson.Gson;
@@ -21,11 +19,9 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -152,8 +148,25 @@ public class MenuActivity extends Activity {
 					SteamUserData userData = gson.fromJson(msg.MessageValue, SteamUserData.class);
 					
 					User.Data = userData;
-				}
-				else if(msg.Type == 4) {
+				} else if(msg.Type == 2 || msg.Type == 3) {
+					Database dbHelper = new Database(MenuActivity.this);
+		        	SQLiteDatabase db = dbHelper.getWritableDatabase();
+		        	ChatMessageData messageData = gson.fromJson(msg.MessageValue, ChatMessageData.class);
+		        	
+		        	ContentValues cv = new ContentValues();
+		        	cv.put("SteamID", messageData.SteamID);
+		        	cv.put("Type", msg.Type);
+		        	if(msg.Type == 2) {
+		        		cv.put("Message", messageData.SteamName + ": " + messageData.Message);
+		        	} else {
+		        		cv.put("Message", messageData.SteamName + " " + messageData.Message);
+		        	}
+		        	db.insert("Messages", "SteamID", cv);
+		        	
+		        	if(User.chatOpen) {
+		        		FriendChatActivity.LoadChatWindow();
+		        	}
+				} else if(msg.Type == 4) {
 					Type collectionType = new TypeToken<ArrayList<SteamUserData>>(){}.getType();
 					ArrayList<SteamUserData> friends = gson.fromJson(msg.MessageValue, collectionType);
 					

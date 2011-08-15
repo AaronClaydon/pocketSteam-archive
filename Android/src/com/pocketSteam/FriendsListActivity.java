@@ -27,16 +27,6 @@ public class FriendsListActivity extends ListActivity {
 
 		OnItemClickListener clickListener = new OnItemClickListener() {
 			@Override
-			/*
-			public void onItemClick(AdapterView<?> parent, View arg1, int position,
-					long arg3) {
-				SteamUserData friend = (SteamUserData)parent.getItemAtPosition(position);
-				Toast.makeText(getApplicationContext(), "Clicked on: " + friend.SteamName, Toast.LENGTH_SHORT).show();
-				try {
-					API.Contact("/AjaxCommand/" + API.SessionToken + "/2", "messageTo=" + friend.SteamID + "&messageText=LOL I CLICKED ON U");
-				} catch (Exception e) { }
-			}
-			*/
 			public void onItemClick(AdapterView<?> parent, View arg1, int position, long arg3) {
 				SteamUserData friend = adapter.friends.get(position);
 				

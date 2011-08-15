@@ -2,12 +2,18 @@ package com.pocketSteam;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.ScrollView;;
 
 public class FriendChatActivity extends Activity {
 	
@@ -46,6 +52,33 @@ public class FriendChatActivity extends Activity {
 		}
 		
 		User.chatOpen = true;
+		LoadChatWindow();
+		
+		TextView chat = (TextView)activity.findViewById(R.id.ChatMessages);
+		chat.setMovementMethod(new ScrollingMovementMethod());
+	}
+	
+	public static void LoadChatWindow() {
+		TextView chat = (TextView)activity.findViewById(R.id.ChatMessages);
+		 
+		Database dbHelper = new Database(activity);
+    	SQLiteDatabase db = dbHelper.getWritableDatabase();
+    	Cursor cursor = db.rawQuery("SELECT * FROM Messages WHERE SteamID='" + SteamID + "'", null);
+    	Boolean exists = cursor.moveToFirst();
+    	
+    	if(exists) {
+    		String messages = "";
+    		
+    		while(!cursor.isAfterLast()) {
+    			messages += Html.fromHtml(cursor.getString(3)) + "\n";
+    			cursor.moveToNext();
+    		}
+    		
+    		chat.setText(messages);
+    		
+    		//ScrollView scroll = (ScrollView)activity.findViewById(R.id.ChatMessagesScroll);
+    		//scroll.fullScroll(View.FOCUS_DOWN);
+    	}
 	}
 	
 	@Override
@@ -83,6 +116,7 @@ public class FriendChatActivity extends Activity {
 	public void SendMessage(View view) {
 		EditText msg = (EditText) findViewById(R.id.ChatMessage);
 		String message = msg.getText().toString();
+		message = message.replaceAll("&", "and");
 		int messageType = 2;
 		
 		if(!message.equals("")) //&& !Pattern.matches("/^\\s+$/", message)
@@ -93,6 +127,18 @@ public class FriendChatActivity extends Activity {
 				message = message.replaceFirst("/me ", "");
 			}
 			
+			Database dbHelper = new Database(FriendChatActivity.this);
+        	SQLiteDatabase db = dbHelper.getWritableDatabase();
+			ContentValues cv = new ContentValues();
+        	cv.put("SteamID", SteamID);
+        	cv.put("Type", messageType);
+        	if(messageType == 2) {
+        		cv.put("Message", User.Data.SteamName + ": " + message);
+        	} else {
+        		cv.put("Message", User.Data.SteamName + " " + message);
+        	}
+        	db.insert("Messages", "SteamID", cv);
+			
 			String reply = API.Contact("/AjaxCommand/" + API.SessionToken + "/" + messageType, "messageTo=" + SteamID + "&messageText=" + message);
 			if(!reply.equals("OK")) {
 				new AlertDialog.Builder(FriendChatActivity.this)
@@ -102,5 +148,6 @@ public class FriendChatActivity extends Activity {
 			}
 		} catch (Exception e) { }
 		msg.setText("");
+		LoadChatWindow();
 	}
 }
