@@ -17,9 +17,10 @@ public final class R {
         public static final int ChatAvatar=0x7f050002;
         public static final int ChatMessage=0x7f050009;
         public static final int ChatMessages=0x7f050007;
+        public static final int ChatSendButton=0x7f05000a;
         public static final int ChatState=0x7f050006;
         public static final int ChatSteamName=0x7f050005;
-        public static final int button1=0x7f05000a;
+        public static final int Settings_AvatarSDCard=0x7f05001a;
         public static final int buttonChatLogs=0x7f050017;
         public static final int buttonDisconnect=0x7f050019;
         public static final int buttonFriends=0x7f050016;
@@ -47,6 +48,7 @@ public final class R {
         public static final int friends=0x7f030002;
         public static final int login=0x7f030003;
         public static final int menu=0x7f030004;
+        public static final int settings=0x7f030005;
     }
     public static final class string {
         public static final int CannotConnect=0x7f040009;

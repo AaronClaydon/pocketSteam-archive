@@ -1,18 +1,24 @@
 package com.pocketSteam;
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FriendsListActivity extends ListActivity {
 	
@@ -38,9 +44,44 @@ public class FriendsListActivity extends ListActivity {
 				}
 			}
 		};
+		
+		OnItemLongClickListener longClickListener = new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View arg1, int position, long arg3) {
+				final SteamUserData friend = adapter.friends.get(position);
+				
+				final String[] items;
+				if(friend.State.equals("Offline")) {
+					final String[] itemsT = { "Chat Log", "Community Profile" };
+					items = itemsT;
+				} else {
+					final String[] itemsT = { "Chat", "Community Profile" };
+					items = itemsT;
+				}
+				
+				new AlertDialog.Builder(FriendsListActivity.this)
+				.setTitle(friend.SteamName)
+				.setItems(items, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        if(items[item].equals("Chat") || items[item].equals("Chat Log")) {
+				        	friendChatIntent = new Intent(FriendsListActivity.this, com.pocketSteam.FriendChatActivity.class);
+							friendChatIntent.putExtra("SteamID", friend.SteamID);
+							
+					        startActivity(friendChatIntent);
+				        } else if(items[item].equals("Community Profile")) {
+				        	Toast.makeText(getApplicationContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
+				        }
+				    }
+				}).create().show();
+
+				return true;
+			}
+		};
+		
 		adapter = new FriendsAdapter(this, R.layout.friend, User.friends);
 		setListAdapter(adapter);
 		getListView().setOnItemClickListener(clickListener);
+		getListView().setOnItemLongClickListener(longClickListener);
 		User.friendsListOpen = true;
 	}
 	
@@ -80,7 +121,9 @@ public class FriendsListActivity extends ListActivity {
                         userNameView.setText(friend.SteamName);
                         stateView.setText(friend.State);
                         
-                        if(friend.Avatar != null) {
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                        
+                        if(friend.Avatar != null && settings.getBoolean("displayAvatar", true)) {
                         	ImageView image = (ImageView)v.findViewById(R.id.steamAvatar);
                         	image.setImageDrawable(friend.Avatar);
                         	

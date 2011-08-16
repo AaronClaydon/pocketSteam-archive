@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ImageView;
-import android.widget.ScrollView;;
+import android.widget.Button;
 
 public class FriendChatActivity extends Activity {
 	
@@ -48,6 +48,15 @@ public class FriendChatActivity extends Activity {
 				avatar.setMaxWidth(64);
 				avatar.setMinimumHeight(64);
 				avatar.setMinimumWidth(64);
+				
+				//Disable textbox and button if offline
+				if(friend.State.equals("Offline")) {
+					EditText textBox = (EditText)findViewById(R.id.ChatMessage);
+					textBox.setEnabled(false);
+					
+					Button sendButton = (Button)findViewById(R.id.ChatSendButton);
+					sendButton.setEnabled(false);
+				}
 			}
 		}
 		
@@ -109,6 +118,17 @@ public class FriendChatActivity extends Activity {
 				avatar.setMaxWidth(32);
 				avatar.setMinimumHeight(32);
 				avatar.setMinimumWidth(32);
+				
+				//Disable textbox and button if offline
+				EditText textBox = (EditText)activity.findViewById(R.id.ChatMessage);
+				Button sendButton = (Button)activity.findViewById(R.id.ChatSendButton);
+				if(friend.State.equals("Offline")) {
+					textBox.setEnabled(false);
+					sendButton.setEnabled(false);
+				} else {
+					textBox.setEnabled(true);
+					sendButton.setEnabled(true);
+				}
 			}
 		}
 	}

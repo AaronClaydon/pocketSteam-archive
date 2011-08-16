@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="Avatars">
+		<CheckBoxPreference 
+			 android:key="displayAvatar"
+			 android:title="Display avatars"
+			 android:summary="Avatars of friends will be downloaded and displayed" 
+			 android:defaultValue="true" />
+		<CheckBoxPreference
+			 android:key="avatarSDCard"
+			 android:title="Store avatars on SD Card"
+			 android:summary="If selected avatars will be stored onto an external SD Card, if not selected they will be stored in the internal memory" 
+			 android:id="@+id/Settings_AvatarSDCard"
+			 android:defaultValue="false" />
+	</PreferenceCategory>
+</PreferenceScreen>

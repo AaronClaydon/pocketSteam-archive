@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -58,7 +60,8 @@ public class MenuActivity extends Activity {
 
 	}
 	public void SettingsButton(View view) {
-
+		Intent settingsIntent = new Intent(MenuActivity.this, com.pocketSteam.SettingsActivity.class);
+        startActivity(settingsIntent);
 	}
 	public void DisconnectButton(View view) {
 		moveTaskToBack(true);
@@ -172,76 +175,80 @@ public class MenuActivity extends Activity {
 					
 					User.friends = friends;
 					
+					final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+					
 					Runnable avatarRunnable = new Runnable() {
 						@Override
 						public void run() {
+							String rootFilePath = null;
+							if(settings.getBoolean("avatarSDCard", false) && android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+								rootFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pocketSteam/AvatarCache/";
+							} else {
+								rootFilePath = "AvatarCache/";
+							}
+							
 							for(SteamUserData friend : User.friends) {
 								try {
 									int position = User.friends.indexOf(friend);
 						        	
-									if(android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
-							        	//Database shenanigans!
-							        	String[] avatarNameSplit = friend.AvatarURL.split("/");							        	
-							        	String avatarName = avatarNameSplit[avatarNameSplit.length-1];
+									//Database shenanigans!
+						        	String[] avatarNameSplit = friend.AvatarURL.split("/");							        	
+						        	String avatarName = avatarNameSplit[avatarNameSplit.length-1];
+						        	
+						        	Database dbHelper = new Database(MenuActivity.this);
+						        	SQLiteDatabase db = dbHelper.getWritableDatabase();
+						        	Cursor cursor = db.rawQuery("SELECT * FROM Avatars WHERE SteamID='" + friend.SteamID + "'", null);
+						        	Boolean exists = cursor.moveToPosition(0);
+						        	if(!exists) {
+						        		friend.Avatar = API.DownloadImage(friend.AvatarURL);
+						        		
+						        		ContentValues cv = new ContentValues();
+							        	cv.put("SteamID", friend.SteamID);
+							        	cv.put("Avatar", avatarName);
+							        	db.insert("Avatars", "SteamID", cv);
 							        	
-							        	Database dbHelper = new Database(MenuActivity.this);
-							        	SQLiteDatabase db = dbHelper.getWritableDatabase();
-							        	Cursor cursor = db.rawQuery("SELECT * FROM Avatars WHERE SteamID='" + friend.SteamID + "'", null);
-							        	Boolean exists = cursor.moveToPosition(0);
-							        	if(!exists) {
-							        		friend.Avatar = API.DownloadImage(friend.AvatarURL);
-							        		
-							        		ContentValues cv = new ContentValues();
-								        	cv.put("SteamID", friend.SteamID);
-								        	cv.put("Avatar", avatarName);
-								        	db.insert("Avatars", "SteamID", cv);
-								        	
-								        	String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pocketSteam/AvatarCache/"; 
-								        	File directoryCreate = new File(filepath);
-								        	directoryCreate.mkdirs(); //Create the directories for the cache
-								        	
-								        	filepath += friend.SteamID.replaceAll(":", "_");
-								        	FileOutputStream fos = null;
-								        	fos = new FileOutputStream(filepath); 
-								        	((BitmapDrawable)friend.Avatar).getBitmap().compress(CompressFormat.PNG, 75, fos);
+							        	File directoryCreate = new File(rootFilePath);
+							        	directoryCreate.mkdirs(); //Create the directories for the cache
+							        	
+							        	String filepath = rootFilePath + friend.SteamID.replaceAll(":", "_");
+							        	FileOutputStream fos = null;
+							        	fos = new FileOutputStream(filepath); 
+							        	((BitmapDrawable)friend.Avatar).getBitmap().compress(CompressFormat.PNG, 75, fos);
 
-							        	}
-							        	if(!cursor.getString(2).equals(avatarName) && !avatarName.equals("fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb.jpg")) {
-							        		db.delete("Avatars", "SteamID='" + friend.SteamID + "'", null);
-							        		
-							        		friend.Avatar = API.DownloadImage(friend.AvatarURL);
-							        		
-							        		ContentValues cv = new ContentValues();
-								        	cv.put("SteamID", friend.SteamID);
-								        	cv.put("Avatar", avatarName);
-								        	db.insert("Avatars", "SteamID", cv);
-								        	
-								        	String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pocketSteam/AvatarCache/"; 
-								        	File directoryCreate = new File(filepath);
-								        	directoryCreate.mkdirs(); //Create the directories for the cache
-								        	
-								        	filepath += friend.SteamID.replaceAll(":", "_");
-								        	FileOutputStream fos = null;
-								        	fos = new FileOutputStream(filepath); 
-								        	((BitmapDrawable)friend.Avatar).getBitmap().compress(CompressFormat.PNG, 75, fos);
-							        		
-							        	} else {
-							        		String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pocketSteam/AvatarCache/";
-							        		filepath += cursor.getString(1).replaceAll(":", "_");
-							        		
-							        		Bitmap bitmap = BitmapFactory.decodeFile(filepath);
-							        		if(bitmap == null) {
-							        			db.delete("Avatars", "SteamID='" + friend.SteamID + "'", null);
-							        		} else {
-							        			friend.Avatar = new BitmapDrawable(bitmap);
-							        		}
-							        	}
-							        				        	
-							        	User.friends.set(position, friend);
-							        	cursor.close();
-							        	db.close();
-							        	dbHelper.close();
-									}
+						        	}
+						        	if(!cursor.getString(2).equals(avatarName) && !avatarName.equals("fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb.jpg")) {
+						        		db.delete("Avatars", "SteamID='" + friend.SteamID + "'", null);
+						        		
+						        		friend.Avatar = API.DownloadImage(friend.AvatarURL);
+						        		
+						        		ContentValues cv = new ContentValues();
+							        	cv.put("SteamID", friend.SteamID);
+							        	cv.put("Avatar", avatarName);
+							        	db.insert("Avatars", "SteamID", cv);
+							        	
+							        	File directoryCreate = new File(rootFilePath);
+							        	directoryCreate.mkdirs(); //Create the directories for the cache
+							        	
+							        	String filepath = rootFilePath + friend.SteamID.replaceAll(":", "_");
+							        	FileOutputStream fos = null;
+							        	fos = new FileOutputStream(filepath); 
+							        	((BitmapDrawable)friend.Avatar).getBitmap().compress(CompressFormat.PNG, 75, fos);
+						        		
+						        	} else {
+						        		String filepath = rootFilePath + cursor.getString(1).replaceAll(":", "_");
+						        		
+						        		Bitmap bitmap = BitmapFactory.decodeFile(filepath);
+						        		if(bitmap == null) {
+						        			db.delete("Avatars", "SteamID='" + friend.SteamID + "'", null);
+						        		} else {
+						        			friend.Avatar = new BitmapDrawable(bitmap);
+						        		}
+						        	}
+						        				        	
+						        	User.friends.set(position, friend);
+						        	cursor.close();
+						        	db.close();
+						        	dbHelper.close();
 						        	
 								} catch(Exception ex) { }
 							}
@@ -254,8 +261,10 @@ public class MenuActivity extends Activity {
 							}
 						}
 					};
-					Thread avatarThread = new Thread(avatarRunnable);
-					avatarThread.start();
+					if(settings.getBoolean("displayAvatar", true)) {
+						Thread avatarThread = new Thread(avatarRunnable);
+						avatarThread.start();
+					}
 					
 					if(User.friendsListOpen) {
 						/*

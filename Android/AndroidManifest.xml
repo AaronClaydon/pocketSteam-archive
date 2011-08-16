@@ -23,5 +23,7 @@
                   android:label="@string/app_name"></activity>
         <activity android:name="com.pocketSteam.FriendChatActivity"
                   android:label="@string/app_name"></activity>
+        <activity android:name="com.pocketSteam.SettingsActivity"
+                  android:label="@string/app_name"></activity>
     </application>
 </manifest>
