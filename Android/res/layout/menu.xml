@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:layout_width="match_parent"
-  android:layout_height="match_parent" android:weightSum="1">
+  android:layout_height="match_parent" android:weightSum="1" android:keepScreenOn="true">
     <Button android:layout_height="wrap_content" android:text="@string/FriendsButton" android:id="@+id/buttonFriends" android:layout_width="match_parent" android:onClick="FriendsButton" android:layout_marginTop="5dp" android:enabled="false"></Button>
     <Button android:onClick="ChatLogsButton" android:layout_height="wrap_content" android:id="@+id/buttonChatLogs" android:text="@string/ChatLogsButton" android:layout_width="match_parent" android:enabled="false"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/SettingsButton" android:id="@+id/buttonSettings" android:layout_width="match_parent" android:onClick="SettingsButton" android:enabled="false"></Button>

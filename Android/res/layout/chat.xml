@@ -15,7 +15,9 @@
             </TableRow>
         </TableRow>
     </TableLayout>
-	<TextView android:layout_height="wrap_content" android:id="@+id/ChatMessages" android:text="No messages to display" android:layout_width="match_parent" android:layout_weight="1.01" android:scrollbars="vertical"></TextView>
+    <ScrollView android:id="@+id/ChatLogScroll" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1">
+		<TextView android:layout_height="wrap_content" android:id="@+id/ChatMessages" android:text="No messages to display" android:layout_width="match_parent" android:layout_weight="1.01"></TextView>
+	</ScrollView>
     <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="match_parent">
         <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/ChatMessage" android:layout_weight="1">
             <requestFocus></requestFocus>

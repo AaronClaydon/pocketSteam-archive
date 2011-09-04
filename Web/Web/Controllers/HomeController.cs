@@ -16,13 +16,14 @@ namespace Web.Controllers
     {
         public ActionResult Index()
         {
-            /*
-            int SMCSLimit = Int32.Parse(System.Configuration.ConfigurationManager.AppSettings["SMCSLimit"]);
-            int SMCSCount = Process.GetProcesses().ToList().Where(d => d.ProcessName == "SMCS.exe").Count();
-            if (SMCSCount >= SMCSLimit)
-                return View("TooManySessions");
-            */
-            return View();
+            if (ConfigurationManager.AppSettings["LoginEnabled"] == "Yes")
+            {
+                return View();
+            }
+            else
+            {
+                return Content("Login Disabled");
+            }
         }
 
         public ActionResult FAQ()
@@ -32,63 +33,53 @@ namespace Web.Controllers
         
         public ActionResult Login(string userName, string passWord, string steamGuardAccessKey, string AndroidVersion)
         {
-            if (AndroidVersion != null)
+            if (ConfigurationManager.AppSettings["LoginEnabled"] != "Yes")
             {
-                if (AndroidVersion != ConfigurationManager.AppSettings["AndroidVersion"])
-                    return Content("Update");
+                return Content("LoginDisabled");
             }
-
-            ClientTGT clientTgt;
-            byte[] serverTgt;
-            AuthBlob accRecord;
-
-            try
+            else
             {
-                Steam2.Initialize(userName, passWord, out clientTgt, out serverTgt, out accRecord);
-            }
-            catch
-            {
-                return Content("Invalid");
-            }
+                if (AndroidVersion != null && ConfigurationManager.AppSettings["CheckMobileVersion"] == "Yes")
+                {
+                    if (AndroidVersion != ConfigurationManager.AppSettings["AndroidVersion"])
+                        return Content("Update");
+                }
 
-            try
-            {
-                if (steamGuardAccessKey != "" && steamGuardAccessKey != null)
-                    Steam3.AuthCode = steamGuardAccessKey;
+                try
+                {
+                    if (steamGuardAccessKey != "" && steamGuardAccessKey != null)
+                        Steam3.AuthCode = steamGuardAccessKey;
 
-                Steam3.UserName = userName;
-                Steam3.Password = passWord;
+                    Steam3.UserName = userName;
+                    Steam3.Password = passWord;
 
-                Steam3.ClientTGT = clientTgt;
-                Steam3.ServerTGT = serverTgt;
-                Steam3.AccountRecord = accRecord;
+                    Steam3.AlternateLogon = false; //true = Uses PS3 logon
 
-                Steam3.AlternateLogon = false; //true = Uses PS3 logon
+                    Steam3.Initialize(true);
 
-                Steam3.Initialize(true);
+                    Steam3.Connect();
+                }
+                catch (Steam3Exception ex)
+                {
+                    Steam3.Shutdown();
+                    return Content("UnknownConnectFail " + ex.InnerException);
+                }
 
-                Steam3.Connect();
-            }
-            catch (Steam3Exception ex)
-            {
+                SteamHandler handler = new SteamHandler();
+                string ipAddress = Request.ServerVariables["REMOTE_ADDR"];
+                handler.Data(userName, passWord, steamGuardAccessKey, ipAddress);
+                Steam3.AddHandler(handler);
+
+                while (handler.Waiting)
+                {
+                    Steam3.Update();
+                    Thread.Sleep(1);
+                }
+
                 Steam3.Shutdown();
-                return Content("UnknownConnectFail " + ex.InnerException);
+
+                return Content(handler.Return);
             }
-
-            SteamHandler handler = new SteamHandler();
-            string ipAddress = Request.ServerVariables["REMOTE_ADDR"];
-            handler.Data(userName, passWord, steamGuardAccessKey, ipAddress);
-            Steam3.AddHandler(handler);
-
-            while (handler.Waiting)
-            {
-                Steam3.Update();
-                Thread.Sleep(1);
-            }
-
-            Steam3.Shutdown();
-            
-            return Content(handler.Return);
         }
 
         public ActionResult Display(string SessionToken)

@@ -4,16 +4,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class FriendChatActivity extends Activity {
 	
@@ -63,8 +67,31 @@ public class FriendChatActivity extends Activity {
 		User.chatOpen = true;
 		LoadChatWindow();
 		
-		TextView chat = (TextView)activity.findViewById(R.id.ChatMessages);
-		chat.setMovementMethod(new ScrollingMovementMethod());
+		ImageView avatar = (ImageView)findViewById(R.id.ChatAvatar);
+		avatar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final String[] items = { "Clear Chat History" };
+				
+				new AlertDialog.Builder(getApplicationContext())
+				.setItems(items, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        if(items[item].equals("Clear Chat History")) {
+				        	Database dbHelper = new Database(getApplicationContext());
+				        	SQLiteDatabase db = dbHelper.getWritableDatabase();
+				        	db.rawQuery("DELETE FROM Messages WHERE SteamID='" + SteamID + "'", null);
+				        	
+				        	FriendChatActivity.LoadChatWindow();
+				        	
+				        	Toast.makeText(getApplicationContext(), "History cleared", Toast.LENGTH_SHORT).show();
+				        } else if(items[item].equals("Community Profile")) {
+				        }
+				    }
+				}).create().show();
+			}});
+		
+		//TextView chat = (TextView)activity.findViewById(R.id.ChatMessages);
+		//chat.setMovementMethod(new ScrollingMovementMethod());
 	}
 	
 	public static void LoadChatWindow() {
@@ -85,8 +112,8 @@ public class FriendChatActivity extends Activity {
     		
     		chat.setText(messages);
     		
-    		//ScrollView scroll = (ScrollView)activity.findViewById(R.id.ChatMessagesScroll);
-    		//scroll.fullScroll(View.FOCUS_DOWN);
+    		ScrollView scroll = (ScrollView)activity.findViewById(R.id.ChatLogScroll);
+    		scroll.fullScroll(View.FOCUS_DOWN);
     	}
 	}
 	
@@ -159,13 +186,19 @@ public class FriendChatActivity extends Activity {
         	}
         	db.insert("Messages", "SteamID", cv);
 			
-			String reply = API.Contact("/AjaxCommand/" + API.SessionToken + "/" + messageType, "messageTo=" + SteamID + "&messageText=" + message);
-			if(!reply.equals("OK")) {
-				new AlertDialog.Builder(FriendChatActivity.this)
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.ConnectionExpired)
-                .create().show();
-			}
+        	final int messageType2 = messageType;
+        	final String message2 = message;
+        	new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						API.Contact("/AjaxCommand/" + API.SessionToken + "/" + messageType2, "messageTo=" + SteamID + "&messageText=" + message2);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} }).start();
+
 		} catch (Exception e) { }
 		msg.setText("");
 		LoadChatWindow();

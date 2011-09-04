@@ -7,109 +7,26 @@ using System.Net;
 
 namespace SMCS
 {
+    [Serializable]
     class Steam2Exception : Exception
     {
-        public Steam2Exception( string msg )
-            : base( msg )
+        public Steam2Exception(string msg)
+            : base(msg)
         {
         }
     }
-
+    [Serializable]
     class Steam3Exception : Exception
     {
-        public Steam3Exception( string msg, Exception inner )
-            : base( msg, inner )
+        public Steam3Exception(string msg, Exception inner)
+            : base(msg, inner)
         {
-        }
-    }
-
-    static class Steam2
-    {
-        public static void Initialize( string userName, string password, out ClientTGT clientTgt, out byte[] serverTgt, out AuthBlob accRecord )
-        {
-            IPEndPoint[] authServerList = GetAuthServerList( userName );
-
-            if ( authServerList == null )
-                throw new Steam2Exception( "Unable to get a list of Steam2 authentication servers." );
-
-            ConnectToAuthServer( authServerList, userName, password, out clientTgt, out serverTgt, out accRecord );
-
-        }
-
-        static IPEndPoint[] GetAuthServerList( string userName )
-        {
-            GeneralDSClient gdsClient = new GeneralDSClient();
-
-            foreach ( IPEndPoint gdsServer in GeneralDSClient.GDServers )
-            {
-                gdsClient.Disconnect();
-
-                try
-                {
-                    DebugLog.WriteLine( "Steam2", "Connecting to GDS Server {0}...", gdsServer );
-                    gdsClient.Connect( gdsServer );
-                }
-                catch ( Exception ex )
-                {
-                    DebugLog.WriteLine( "Steam2", "Unable to connect to server.\n{0}", ex.ToString() );
-                    continue;
-                }
-
-                DebugLog.WriteLine( "Steam2", "Getting auth server list from {0} using username '{1}'...", gdsServer, userName );
-                IPEndPoint[] authServerList = gdsClient.GetAuthServerList( userName );
-
-                if ( authServerList == null || authServerList.Length == 0 )
-                {
-                    DebugLog.WriteLine( "Steam2", "Unable to get auth server list. Trying next GDS server..." );
-                    continue;
-                }
-
-                gdsClient.Disconnect();
-                return authServerList;
-            }
-
-            return null;
-        }
-
-        static bool ConnectToAuthServer( IPEndPoint[] authServerList, string userName, string password, out ClientTGT clientTgt, out byte[] serverTgt, out AuthBlob accRecord )
-        {
-            clientTgt = null;
-            serverTgt = null;
-            accRecord = null;
-
-            AuthServerClient asClient = new AuthServerClient();
-
-            foreach ( IPEndPoint authServer in authServerList )
-            {
-                asClient.Disconnect();
-
-                try
-                {
-                    DebugLog.WriteLine( "Steam2", "Connecting to auth server {0}...", authServer );
-                    asClient.Connect( authServer );
-                }
-                catch ( Exception ex )
-                {
-                    DebugLog.WriteLine( "Steam2", "Unable to connect to auth server.\n{0}", ex.ToString() );
-                    continue;
-                }
-
-                AuthServerClient.LoginResult loginResult = asClient.Login( userName, password, out clientTgt, out serverTgt, out accRecord );
-
-                if ( loginResult != AuthServerClient.LoginResult.LoggedIn )
-                    throw new Steam2Exception( "Result: " + loginResult );
-
-                asClient.Disconnect();
-                return true;
-            }
-
-            return false;
         }
     }
 
     interface ICallbackHandler
     {
-        void HandleCallback( CallbackMsg msg );
+        void HandleCallback(CallbackMsg msg);
     }
 
     static class Steam3
@@ -127,10 +44,6 @@ namespace SMCS
         public static string UserName { get; set; }
         public static string Password { get; set; }
 
-        public static ClientTGT ClientTGT { get; set; }
-        public static byte[] ServerTGT { get; set; }
-        public static AuthBlob AccountRecord { get; set; }
-
         public static string AuthCode { get; set; }
 
         public static bool AlternateLogon { get; set; }
@@ -142,9 +55,9 @@ namespace SMCS
         }
 
 
-        public static void Initialize( bool useTcp )
+        public static void Initialize(bool useTcp)
         {
-            SteamClient = new SteamClient( useTcp ? CMClient.ConnectionType.Tcp : CMClient.ConnectionType.Udp );
+            SteamClient = new SteamClient(useTcp ? CMClient.ConnectionType.Tcp : CMClient.ConnectionType.Udp);
 
             SteamFriends = SteamClient.GetHandler<SteamFriends>();
             SteamUser = SteamClient.GetHandler<SteamUser>();
@@ -158,9 +71,9 @@ namespace SMCS
             {
                 SteamClient.Connect();
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                throw new Steam3Exception( "Unable to connect to CM server.", ex );
+                throw new Steam3Exception("Unable to connect to CM server.", ex);
             }
         }
 
@@ -170,47 +83,43 @@ namespace SMCS
             SteamClient.Disconnect();
         }
 
-        public static void AddHandler( ICallbackHandler handler )
+        public static void AddHandler(ICallbackHandler handler)
         {
-            callbackHandlers.Add( handler );
+            callbackHandlers.Add(handler);
         }
-        public static void RemoveHandler( ICallbackHandler handler )
+        public static void RemoveHandler(ICallbackHandler handler)
         {
-            callbackHandlers.Remove( handler );
+            callbackHandlers.Remove(handler);
         }
 
         public static void Update()
         {
             CallbackMsg msg = SteamClient.GetCallback();
 
-            if ( msg == null )
+            if (msg == null)
                 return;
 
             SteamClient.FreeLastCallback();
 
-            if ( msg.IsType<SteamClient.ConnectCallback>() )
+            if (msg.IsType<SteamClient.ConnectCallback>())
             {
-                SteamUser.LogOn( new SteamUser.LogOnDetails()
-                    {
-                        Username = Steam3.UserName,
-                        Password = Steam3.Password,
+                SteamUser.LogOn(new SteamUser.LogOnDetails()
+                {
+                    Username = Steam3.UserName,
+                    Password = Steam3.Password,
 
-                        ClientTGT = Steam3.ClientTGT,
-                        ServerTGT = Steam3.ServerTGT,
-                        AccRecord = Steam3.AccountRecord,
+                    AuthCode = Steam3.AuthCode,
 
-                        AuthCode = Steam3.AuthCode,
-
-                        AccountInstance = ( Steam3.AlternateLogon ? 2u : 1u ),
-                    } );
+                    AccountInstance = (Steam3.AlternateLogon ? 2u : 1u),
+                });
             }
 
-            List<ICallbackHandler> tempHandlers = new List<ICallbackHandler>( callbackHandlers );
+            List<ICallbackHandler> tempHandlers = new List<ICallbackHandler>(callbackHandlers);
 
             // push it along to anyone who wants to handle this
-            foreach ( ICallbackHandler handler in tempHandlers )
+            foreach (ICallbackHandler handler in tempHandlers)
             {
-                handler.HandleCallback( msg );
+                handler.HandleCallback(msg);
             }
         }
     }

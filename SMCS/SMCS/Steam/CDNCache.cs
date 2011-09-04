@@ -128,7 +128,7 @@ namespace SMCS
 
         static void JobFunc()
         {
-            while ( true )
+            while ( Program.Update )
             {
 
                 AvatarData data;

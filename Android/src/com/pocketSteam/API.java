@@ -13,7 +13,7 @@ import android.graphics.drawable.Drawable;
 
 public class API {
 	static String APIServer = "https://pocketsteam.com";
-	static int VERSION = 10;
+	static int VERSION = 34;
 	
 	static String SessionToken = null;
 	static String PassKey = null;

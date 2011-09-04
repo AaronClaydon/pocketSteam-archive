@@ -61,6 +61,8 @@ namespace Web
 
         protected void Application_Start()
         {
+            ModelMetadataProviders.Current = new DataAnnotationsModelMetadataProvider();
+
             AreaRegistration.RegisterAllAreas();
 
             RegisterGlobalFilters(GlobalFilters.Filters);

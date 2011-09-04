@@ -12,7 +12,7 @@
             DisableInputBoxes();
             $("#notification").removeClass();
             $("#notification").addClass('notice_box');
-            $("#notification").text('Autherising, please wait...');
+            $("#notification").text('Authorizing, please wait...');
 
             $.ajax({
                 type: "POST",
@@ -32,6 +32,10 @@
                         $("#notification").removeClass();
                         $("#notification").addClass('error_box');
                         $("#notification").text('Invalid username and/or password');
+                    } else if (splitData[0] == "pocketSteamOffline") {
+                        $("#notification").removeClass();
+                        $("#notification").addClass('error_box');
+                        $("#notification").text('pocketSteam is currently not responding');
                     } else if (splitData[0] == "Success") {
                         var gotoLocation = '@Url.Action("Display")' + "/" + splitData[1];
 

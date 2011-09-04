@@ -5,6 +5,7 @@ using System.Web;
 using SteamKit2;
 using System.Configuration;
 using Web.Models;
+using System.Net.Sockets;
 
 namespace Web
 {
@@ -37,6 +38,23 @@ namespace Web
 
                 if (logOnResp.Result == EResult.OK)
                 {
+                    TcpClient client = null;
+                    NetworkStream ns = null;
+                    try
+                    {
+                        client = new TcpClient("localhost", 8165);
+                        ns = client.GetStream();
+                    }
+                    catch
+                    {
+                        openedSMCS = true;
+                        Steam3.Shutdown();
+                        Waiting = false;
+                        Return = "pocketSteamOffline";
+                        Steam3.RemoveHandler(this);
+                        return;
+                    }
+
                     DatabaseEntities db = new DatabaseEntities();
 
                     string sessionToken = Guid.NewGuid().ToString().Replace('-', 'a');
@@ -56,6 +74,7 @@ namespace Web
 
                     if (!openedSMCS)
                     {
+                        /*
                         NewSession newSession = new NewSession
                         {
                             SessionToken = sessionToken,
@@ -65,32 +84,20 @@ namespace Web
                             DateCreated = DateTime.Now
                         };
                         db.NewSessions.AddObject(newSession);
+                        */
+                        string data = sessionToken + "\n" +
+                                      userName + "\n" +
+                                      passWord + "\n" +
+                                      authCode;
+
+                        byte[] dataBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(data);
+                        ns.Write(dataBytes, 0, dataBytes.Length);
+                        ns.Close();
+                        client.Close();
 
                         openedSMCS = true;
                     }
-                    /*
-                    if (!openedSMCS)
-                    {
-                        System.Diagnostics.Process process = new System.Diagnostics.Process();
-                        process.StartInfo.FileName = ConfigurationManager.AppSettings["SMCSLocation"];
-
-                        if (authCode == "")
-                            process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2}",
-                                    userName,
-                                    passWord,
-                                    sessionToken
-                                );
-                        else
-                            process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3}",
-                                    userName,
-                                    passWord,
-                                    sessionToken,
-                                    authCode
-                                );
-
-                        openedSMCS = process.Start();
-                        process.Close();
-                    } */
+                    
                     db.SaveChanges();
                     Steam3.Shutdown();
                 }

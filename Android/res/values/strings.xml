@@ -10,7 +10,7 @@
     <string name="Connecting">Connecting to pocketSteam</string>
     <string name="InvalidDetails">Invalid username/password provided</string>
     <string name="CannotConnect">There was an error while connecting to pocketSteam</string>
-    <string name="NoFriends">You currently have no Steam friends</string>
+    <string name="NoFriends">You currently have no Steam friends to display</string>
     <string name="FriendsButton">Friends</string>
     <string name="SettingsButton">Settings</string>
     <string name="PleaseWait">Please wait</string>

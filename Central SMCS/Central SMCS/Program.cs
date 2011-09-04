@@ -5,61 +5,131 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Configuration;
+using System.IO;
+using System.Net.Sockets;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Central_SMCS
 {
     class Program
     {
-        static DatabaseEntities db = new DatabaseEntities();
+        static TcpListener server;
+        static bool serverOnline = true;
+        static Thread connectionThread = null;
 
         static void Main(string[] args)
         {
-            CreateNewSessions();
+            Program program = new Program();
+
+            Console.Write("Starting connection thread...");
+            connectionThread = new Thread(new ThreadStart(program.StartServer));
+            connectionThread.Name = "Connection thread";
+            connectionThread.Start();
+            Console.WriteLine("Done");
+
+
+            while (serverOnline)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    StopServer();
+                }
+            }
         }
 
-        static void CreateNewSessions()
+        static void StopServer()
         {
-            while (true)
+            connectionThread.Abort();
+            serverOnline = false;
+            server.Stop();
+        }
+
+        void StartServer()
+        {
+            Console.Write("Starting socket...");
+            try
             {
+                server = new TcpListener(IPAddress.Any, 8165);
+                server.Start();
+            }
+            catch
+            {
+                Console.WriteLine("FAILED");
+                StopServer();
+                return;
+            }
+            Console.WriteLine("Done");
+
+            while (serverOnline)
+            {
+                TcpClient newClient = server.AcceptTcpClient();
+
+                ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), newClient);
+            }
+        }
+
+        void ProcessClient(object clientObject)
+        {
+            TcpClient client = (TcpClient)clientObject;
+
+            byte[] bytes = new byte[1024];
+            StringBuilder clientData = new StringBuilder();
+
+            using (NetworkStream stream = client.GetStream())
+            {
+                stream.ReadTimeout = 60000;
+
+                int bytesRead = 0;
                 try
                 {
-                    List<NewSession> newSessions = db.NewSessions.ToList();
-                    db.Refresh(System.Data.Objects.RefreshMode.ClientWins, newSessions);
+                    bytesRead = stream.Read(bytes, 0, bytes.Length);
 
-                    foreach (NewSession session in newSessions)
+                    if (bytesRead > 0)
                     {
-                        Process process = new Process();
-                        process.StartInfo.FileName = ConfigurationManager.AppSettings["SMCSLocation"];
-
-                        if (session.SteamGuardAuth == "")
-                            process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2}",
-                                    session.Username,
-                                    session.Password,
-                                    session.SessionToken
-                                );
-                        else
-                            process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3}",
-                                    session.Username,
-                                    session.Password,
-                                    session.SessionToken,
-                                    session.SteamGuardAuth
-                                );
-
-                        process.Start();
-                        process.Close();
-
-                        Console.WriteLine(DateTime.Now + "(" + session.DateCreated + ") | Started: " + session.Username);
-
-                        db.NewSessions.DeleteObject(session);
+                        clientData.Append(Encoding.ASCII.GetString(bytes, 0, bytesRead));
+                        stream.ReadTimeout = 10000;
                     }
-                    db.SaveChanges();
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(DateTime.Now + " | Database error: (" + ex.Message + ")" + ex.InnerException);
-                }
-                Thread.Sleep(1200);
+                catch {}
             }
+
+            string[] dataArray = Regex.Split(clientData.ToString(), "\n");
+
+            if (dataArray.Count() != 4)
+                return;
+
+            try
+            {
+                string sessionToken = dataArray[0];
+                string userName = dataArray[1];
+                string passWord = dataArray[2];
+                string authCode = dataArray[3];
+
+                Process process = new Process();
+                process.StartInfo.FileName = ConfigurationManager.AppSettings["SMCSLocation"];
+
+                if (authCode == "")
+                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2}",
+                            userName,
+                            passWord,
+                            sessionToken
+                        );
+                else
+                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3}",
+                            userName,
+                            passWord,
+                            sessionToken,
+                            authCode
+                        );
+
+                process.Start();
+                process.Close();
+
+                Console.WriteLine(DateTime.Now + " | Started: " + userName);
+            } catch {}
         }
     }
 }

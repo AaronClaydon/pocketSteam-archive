@@ -115,6 +115,16 @@ namespace SMCS
                         //friends.Add(friendID.ToString(), messageObject);
                         friends.Add(messageObject);
                     }
+
+                    //Delete other friends lists in DB
+                    List<Message> queuedMessages = db.Messages.Where(d => d.Type == 4).ToList();
+                    foreach (Message toDeleteMsg in queuedMessages)
+                    {
+                        db.Messages.DeleteObject(toDeleteMsg);
+                    }
+
+                    db.SaveChanges();
+
                     friends = friends.OrderBy(d => d.StateID).ThenBy(d => d.SteamName).ToList();
                     string messageJson = JsonConvert.SerializeObject(friends);
 
@@ -127,6 +137,10 @@ namespace SMCS
                     };
                     db.Messages.AddObject(message);
                     db.SaveChanges();
+
+                    Program.FriendsSent++;
+
+                    Console.Title = "SMCS / " + Program.userName + " / " + Program.FriendsSent;
                 }
             }
 

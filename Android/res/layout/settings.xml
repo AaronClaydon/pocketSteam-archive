@@ -11,6 +11,6 @@
 			 android:title="Store avatars on SD Card"
 			 android:summary="If selected avatars will be stored onto an external SD Card, if not selected they will be stored in the internal memory" 
 			 android:id="@+id/Settings_AvatarSDCard"
-			 android:defaultValue="false" />
+			 android:defaultValue="true" />
 	</PreferenceCategory>
 </PreferenceScreen>

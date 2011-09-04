@@ -10,15 +10,21 @@ namespace SMCS
 {
     class Program
     {
-        static Thread steamUpdateThread;
+        static Thread DBUpdateThread;
+        static Thread SteamUpdateThread;
+
+        public static bool Update = true;
 
         public static string userName = string.Empty;
         public static string passWord = string.Empty;
         public static string steamGuardKey = string.Empty;
         public static string sessionToken = string.Empty;
 
+        public static int FriendsSent = 0;
+
         static DatabaseEntities db = new DatabaseEntities();
 
+        [STAThread]
         static void Main(string[] args)
         {
             int i = 0;
@@ -52,19 +58,6 @@ namespace SMCS
         {
             CDNCache.Initialize();
 
-            ClientTGT clientTgt = new ClientTGT();
-            byte[] serverTgt = new byte[50];
-            AuthBlob accRecord = new AuthBlob();
-
-            try
-            {
-                Steam2.Initialize(userName, passWord, out clientTgt, out serverTgt, out accRecord);
-            }
-            catch
-            {
-                Program.ShutDown("can not init");
-            }
-
             try
             {
                 Steam3.UserName = userName;
@@ -72,10 +65,6 @@ namespace SMCS
 
                 if (steamGuardKey != "" && steamGuardKey != null)
                     Steam3.AuthCode = steamGuardKey;
-
-                Steam3.ClientTGT = clientTgt;
-                Steam3.ServerTGT = serverTgt;
-                Steam3.AccountRecord = accRecord;
 
                 Steam3.AlternateLogon = false; //Uses PS3 logon
 
@@ -87,9 +76,14 @@ namespace SMCS
             {
                 Program.ShutDown("can not init2");
             }
-            steamUpdateThread = new Thread(new ThreadStart(SteamUpdate), 1048576);
-            steamUpdateThread.Start();
-
+            DBUpdateThread = new Thread(new ThreadStart(DBUpdate), 1048576);
+            DBUpdateThread.Name = "DB Update";
+            DBUpdateThread.Start();
+            /*
+            SteamUpdateThread = new Thread(new ThreadStart(SteamUpdate));
+            SteamUpdateThread.Name = "Steam update thread";
+            SteamUpdateThread.Start();
+            */
             SteamCallback callback = new SteamCallback();
 
             Steam3.AddHandler(callback);
@@ -112,10 +106,26 @@ namespace SMCS
             Thread.Sleep(500);
             Environment.Exit(0);
         }
-
+        /*
         public static void SteamUpdate()
         {
-            while (true)
+            try
+            {
+                while (Update)
+                {
+                    Steam3.Update();
+                    Thread.Sleep(1);
+                }
+            }
+            catch
+            {
+                Update = false;
+            }
+        }
+        */
+        public static void DBUpdate()
+        {
+            while (Update)
             {
                 Steam3.Update();
 
