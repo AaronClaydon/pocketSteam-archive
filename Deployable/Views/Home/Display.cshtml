@@ -60,7 +60,9 @@
             url: '/AjaxCommand/@Model.SessionToken/' + type + '/',
             data: dataString,
             success: function (data) {
-                if (data != "OK") {
+                if (data == "ErrorNoSend") {
+                    alert('Could not send the command, try again or restart');
+                } else if (data != "OK") {
                     alert('Unknown: ' + data);
                 }
             },
