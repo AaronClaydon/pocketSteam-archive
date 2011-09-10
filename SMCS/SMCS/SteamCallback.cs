@@ -140,7 +140,7 @@ namespace SMCS
 
                     Program.FriendsSent++;
 
-                    Console.Title = "SMCS / " + Program.userName + " / " + Program.FriendsSent;
+                    Console.Title = "SMCS / " + Program.userName + " / " + Program.FriendsSent + " / Port: " + Program.portNumber;
                 }
             }
 
@@ -170,35 +170,41 @@ namespace SMCS
                         Session session = db.Sessions.Single(d => d.SessionToken == Program.sessionToken);
                         session.Status = 2;
                         db.SaveChanges();
+
+                        Program.steamConnectionReply = "Success";
                     }
                     catch 
                     {
                         Environment.Exit(0);
                     }
                 }
-                else if (logOnResp.Result == EResult.AccountLogonDenied)
+                else if (logOnResp.Result == EResult.InvalidPassword)
                 {
-                    Program.ShutDown("steamguard deny");
-
-                    Steam3.AuthCode = "9CTTG";
-
-                    // if we got this logon response, we got disconnected, so lets reconnect
-                    try
-                    {
-                        Steam3.Connect();
-                    }
-                    catch (Steam3Exception ex)
-                    {
-                        Program.ShutDown("steamguard connect fail");
-
-                        return;
-                    }
+                    Steam3.Shutdown();
+                    Program.steamConnectionReply = "Invalid";
+                    Steam3.RemoveHandler(this);
+                    Program.ShutDown("SteamGuard");
+                }
+                else if (logOnResp.Result == EResult.AccountLogonDenied || logOnResp.Result == EResult.InvalidLoginAuthCode)
+                {
+                    Steam3.Shutdown();
+                    Program.steamConnectionReply = "SteamGuard";
+                    Steam3.RemoveHandler(this);
+                    Program.ShutDown("SteamGuard");
+                }
+                else if (logOnResp.Result == EResult.AlreadyLoggedInElsewhere)
+                {
+                    Steam3.Shutdown();
+                    Program.steamConnectionReply = "LoggedInElsewhere";
+                    Steam3.RemoveHandler(this);
+                    Program.ShutDown("LoggedInElseWhere");
                 }
                 else if (logOnResp.Result != EResult.OK)
                 {
-                    Program.ShutDown("unknown login response");
-
-                    return;
+                    Steam3.Shutdown();
+                    Program.steamConnectionReply = "UnknownConnectFail " + logOnResp.Result;
+                    Steam3.RemoveHandler(this);
+                    Program.ShutDown("UnknownConnectFail");
                 }
             }
 
@@ -216,13 +222,16 @@ namespace SMCS
                     Program.ShutDown("friend added error");
                 }
             }
-
-            msg.Handle<SteamClient.DisconnectCallback>((callback) =>
+            try
             {
-                Program.ShutDown("disconnect callback");
+                msg.Handle<SteamClient.DisconnectCallback>((callback) =>
+                {
+                    Program.ShutDown("disconnect callback");
 
-                return;
-            });
+                    return;
+                });
+            }
+            catch { }
         }
 
         public static bool IsZeros(byte[] bytes)

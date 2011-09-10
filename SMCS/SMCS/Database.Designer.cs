@@ -96,38 +96,6 @@ namespace SMCS
             }
         }
         private ObjectSet<Message> _Messages;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<Command> Commands
-        {
-            get
-            {
-                if ((_Commands == null))
-                {
-                    _Commands = base.CreateObjectSet<Command>("Commands");
-                }
-                return _Commands;
-            }
-        }
-        private ObjectSet<Command> _Commands;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<NewSession> NewSessions
-        {
-            get
-            {
-                if ((_NewSessions == null))
-                {
-                    _NewSessions = base.CreateObjectSet<NewSession>("NewSessions");
-                }
-                return _NewSessions;
-            }
-        }
-        private ObjectSet<NewSession> _NewSessions;
 
         #endregion
         #region AddTo Methods
@@ -147,22 +115,6 @@ namespace SMCS
         {
             base.AddObject("Messages", message);
         }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the Commands EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToCommands(Command command)
-        {
-            base.AddObject("Commands", command);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the NewSessions EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToNewSessions(NewSession newSession)
-        {
-            base.AddObject("NewSessions", newSession);
-        }
 
         #endregion
     }
@@ -171,163 +123,6 @@ namespace SMCS
     #endregion
     
     #region Entities
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="DatabaseModel", Name="Command")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class Command : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new Command object.
-        /// </summary>
-        /// <param name="id">Initial value of the id property.</param>
-        /// <param name="sessionToken">Initial value of the SessionToken property.</param>
-        /// <param name="type">Initial value of the Type property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        public static Command CreateCommand(global::System.Int32 id, global::System.String sessionToken, global::System.Int32 type, global::System.DateTime dateCreated)
-        {
-            Command command = new Command();
-            command.id = id;
-            command.SessionToken = sessionToken;
-            command.Type = type;
-            command.DateCreated = dateCreated;
-            return command;
-        }
-
-        #endregion
-        #region Primitive Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                if (_id != value)
-                {
-                    OnidChanging(value);
-                    ReportPropertyChanging("id");
-                    _id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("id");
-                    OnidChanged();
-                }
-            }
-        }
-        private global::System.Int32 _id;
-        partial void OnidChanging(global::System.Int32 value);
-        partial void OnidChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String SessionToken
-        {
-            get
-            {
-                return _SessionToken;
-            }
-            set
-            {
-                OnSessionTokenChanging(value);
-                ReportPropertyChanging("SessionToken");
-                _SessionToken = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("SessionToken");
-                OnSessionTokenChanged();
-            }
-        }
-        private global::System.String _SessionToken;
-        partial void OnSessionTokenChanging(global::System.String value);
-        partial void OnSessionTokenChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 Type
-        {
-            get
-            {
-                return _Type;
-            }
-            set
-            {
-                OnTypeChanging(value);
-                ReportPropertyChanging("Type");
-                _Type = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("Type");
-                OnTypeChanged();
-            }
-        }
-        private global::System.Int32 _Type;
-        partial void OnTypeChanging(global::System.Int32 value);
-        partial void OnTypeChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String CommandValue
-        {
-            get
-            {
-                return _CommandValue;
-            }
-            set
-            {
-                OnCommandValueChanging(value);
-                ReportPropertyChanging("CommandValue");
-                _CommandValue = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("CommandValue");
-                OnCommandValueChanged();
-            }
-        }
-        private global::System.String _CommandValue;
-        partial void OnCommandValueChanging(global::System.String value);
-        partial void OnCommandValueChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.DateTime DateCreated
-        {
-            get
-            {
-                return _DateCreated;
-            }
-            set
-            {
-                OnDateCreatedChanging(value);
-                ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateCreated");
-                OnDateCreatedChanged();
-            }
-        }
-        private global::System.DateTime _DateCreated;
-        partial void OnDateCreatedChanging(global::System.DateTime value);
-        partial void OnDateCreatedChanged();
-
-        #endregion
-    
-    }
     
     /// <summary>
     /// No Metadata Documentation available.
@@ -491,189 +286,6 @@ namespace SMCS
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="DatabaseModel", Name="NewSession")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class NewSession : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new NewSession object.
-        /// </summary>
-        /// <param name="id">Initial value of the id property.</param>
-        /// <param name="sessionToken">Initial value of the SessionToken property.</param>
-        /// <param name="username">Initial value of the Username property.</param>
-        /// <param name="password">Initial value of the Password property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        public static NewSession CreateNewSession(global::System.Int32 id, global::System.String sessionToken, global::System.String username, global::System.String password, global::System.DateTime dateCreated)
-        {
-            NewSession newSession = new NewSession();
-            newSession.id = id;
-            newSession.SessionToken = sessionToken;
-            newSession.Username = username;
-            newSession.Password = password;
-            newSession.DateCreated = dateCreated;
-            return newSession;
-        }
-
-        #endregion
-        #region Primitive Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                if (_id != value)
-                {
-                    OnidChanging(value);
-                    ReportPropertyChanging("id");
-                    _id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("id");
-                    OnidChanged();
-                }
-            }
-        }
-        private global::System.Int32 _id;
-        partial void OnidChanging(global::System.Int32 value);
-        partial void OnidChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String SessionToken
-        {
-            get
-            {
-                return _SessionToken;
-            }
-            set
-            {
-                OnSessionTokenChanging(value);
-                ReportPropertyChanging("SessionToken");
-                _SessionToken = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("SessionToken");
-                OnSessionTokenChanged();
-            }
-        }
-        private global::System.String _SessionToken;
-        partial void OnSessionTokenChanging(global::System.String value);
-        partial void OnSessionTokenChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Username
-        {
-            get
-            {
-                return _Username;
-            }
-            set
-            {
-                OnUsernameChanging(value);
-                ReportPropertyChanging("Username");
-                _Username = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Username");
-                OnUsernameChanged();
-            }
-        }
-        private global::System.String _Username;
-        partial void OnUsernameChanging(global::System.String value);
-        partial void OnUsernameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Password
-        {
-            get
-            {
-                return _Password;
-            }
-            set
-            {
-                OnPasswordChanging(value);
-                ReportPropertyChanging("Password");
-                _Password = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Password");
-                OnPasswordChanged();
-            }
-        }
-        private global::System.String _Password;
-        partial void OnPasswordChanging(global::System.String value);
-        partial void OnPasswordChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String SteamGuardAuth
-        {
-            get
-            {
-                return _SteamGuardAuth;
-            }
-            set
-            {
-                OnSteamGuardAuthChanging(value);
-                ReportPropertyChanging("SteamGuardAuth");
-                _SteamGuardAuth = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("SteamGuardAuth");
-                OnSteamGuardAuthChanged();
-            }
-        }
-        private global::System.String _SteamGuardAuth;
-        partial void OnSteamGuardAuthChanging(global::System.String value);
-        partial void OnSteamGuardAuthChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.DateTime DateCreated
-        {
-            get
-            {
-                return _DateCreated;
-            }
-            set
-            {
-                OnDateCreatedChanging(value);
-                ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateCreated");
-                OnDateCreatedChanged();
-            }
-        }
-        private global::System.DateTime _DateCreated;
-        partial void OnDateCreatedChanging(global::System.DateTime value);
-        partial void OnDateCreatedChanged();
-
-        #endregion
-    
-    }
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="DatabaseModel", Name="Session")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
@@ -691,7 +303,8 @@ namespace SMCS
         /// <param name="lastHeartbeat">Initial value of the LastHeartbeat property.</param>
         /// <param name="passKey">Initial value of the PassKey property.</param>
         /// <param name="status">Initial value of the Status property.</param>
-        public static Session CreateSession(global::System.Int32 id, global::System.String sessionToken, global::System.String iPAddress, global::System.DateTime dateCreated, global::System.DateTime lastHeartbeat, global::System.String passKey, global::System.Byte status)
+        /// <param name="sMCSPort">Initial value of the SMCSPort property.</param>
+        public static Session CreateSession(global::System.Int32 id, global::System.String sessionToken, global::System.String iPAddress, global::System.DateTime dateCreated, global::System.DateTime lastHeartbeat, global::System.String passKey, global::System.Byte status, global::System.Int32 sMCSPort)
         {
             Session session = new Session();
             session.id = id;
@@ -701,6 +314,7 @@ namespace SMCS
             session.LastHeartbeat = lastHeartbeat;
             session.PassKey = passKey;
             session.Status = status;
+            session.SMCSPort = sMCSPort;
             return session;
         }
 
@@ -877,6 +491,30 @@ namespace SMCS
         private global::System.Byte _Status;
         partial void OnStatusChanging(global::System.Byte value);
         partial void OnStatusChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 SMCSPort
+        {
+            get
+            {
+                return _SMCSPort;
+            }
+            set
+            {
+                OnSMCSPortChanging(value);
+                ReportPropertyChanging("SMCSPort");
+                _SMCSPort = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SMCSPort");
+                OnSMCSPortChanged();
+            }
+        }
+        private global::System.Int32 _SMCSPort;
+        partial void OnSMCSPortChanging(global::System.Int32 value);
+        partial void OnSMCSPortChanged();
 
         #endregion
     

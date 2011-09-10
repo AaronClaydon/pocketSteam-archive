@@ -3,8 +3,6 @@
   <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Sessions" EntityType="webSteamModel.Session" />
     <EntitySet Name="Messages" EntityType="webSteamModel.Message" />
-    <EntitySet Name="Commands" EntityType="webSteamModel.Command" />
-    <EntitySet Name="NewSessions" EntityType="webSteamModel.NewSession" />
   </EntityContainer>
   <EntityType Name="Session">
     <Key>
@@ -17,6 +15,7 @@
     <Property Name="LastHeartbeat" Type="DateTime" Nullable="false" />
     <Property Type="String" Name="PassKey" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Type="Byte" Name="Status" Nullable="false" />
+    <Property Type="Int32" Name="SMCSPort" Nullable="false" />
   </EntityType>
   <EntityType Name="Message">
     <Key>
@@ -26,27 +25,6 @@
     <Property Type="String" Name="SessionToken" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Type="Int32" Name="Type" Nullable="false" />
     <Property Type="String" Name="MessageValue" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Type="DateTime" Name="DateCreated" Nullable="false" />
-  </EntityType>
-  <EntityType Name="Command">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Type="String" Name="SessionToken" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Type="Int32" Name="Type" Nullable="false" />
-    <Property Type="String" Name="CommandValue" Nullable="true" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Type="DateTime" Name="DateCreated" Nullable="false" />
-  </EntityType>
-  <EntityType Name="NewSession">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Type="String" Name="SessionToken" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="Username" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="Password" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="SteamGuardAuth" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Type="DateTime" Name="DateCreated" Nullable="false" />
   </EntityType>
 </Schema>

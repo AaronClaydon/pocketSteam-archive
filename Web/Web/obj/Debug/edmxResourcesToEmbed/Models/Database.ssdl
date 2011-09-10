@@ -1,21 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="webSteamModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
   <EntityContainer Name="webSteamModelStoreContainer">
-    <EntitySet Name="Commands" EntityType="webSteamModel.Store.Commands" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Messages" EntityType="webSteamModel.Store.Messages" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="NewSessions" EntityType="webSteamModel.Store.NewSessions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Sessions" EntityType="webSteamModel.Store.Sessions" store:Type="Tables" Schema="dbo" />
   </EntityContainer>
-  <EntityType Name="Commands">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-    <Property Name="SessionToken" Type="varchar" Nullable="false" MaxLength="50" />
-    <Property Name="Type" Type="int" Nullable="false" />
-    <Property Name="CommandValue" Type="varchar(max)" />
-    <Property Name="DateCreated" Type="datetime" Nullable="false" />
-  </EntityType>
   <EntityType Name="Messages">
     <Key>
       <PropertyRef Name="id" />
@@ -24,17 +12,6 @@
     <Property Name="SessionToken" Type="varchar" Nullable="false" MaxLength="50" />
     <Property Name="Type" Type="int" Nullable="false" />
     <Property Name="Message" Type="varchar(max)" Nullable="false" />
-    <Property Name="DateCreated" Type="datetime" Nullable="false" />
-  </EntityType>
-  <EntityType Name="NewSessions">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-    <Property Name="SessionToken" Type="varchar(max)" Nullable="false" />
-    <Property Name="Username" Type="varchar(max)" Nullable="false" />
-    <Property Name="Password" Type="varchar(max)" Nullable="false" />
-    <Property Name="SteamGuardAuth" Type="varchar(max)" />
     <Property Name="DateCreated" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Sessions">
@@ -48,5 +25,6 @@
     <Property Name="LastHeartbeat" Type="datetime" Nullable="false" />
     <Property Name="PassKey" Type="varchar" Nullable="false" MaxLength="50" />
     <Property Name="Status" Type="tinyint" Nullable="false" />
+    <Property Name="SMCSPort" Type="int" Nullable="false" />
   </EntityType>
 </Schema>

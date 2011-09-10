@@ -17,6 +17,7 @@ namespace Central_SMCS
         static TcpListener server;
         static bool serverOnline = true;
         static Thread connectionThread = null;
+        static byte byteNumber = 0;
 
         static void Main(string[] args)
         {
@@ -78,6 +79,19 @@ namespace Central_SMCS
             byte[] bytes = new byte[1024];
             StringBuilder clientData = new StringBuilder();
 
+            byteNumber += 1;
+            int portNumber = 0;
+
+            if (byteNumber < 9)
+                portNumber = Int32.Parse("500" + byteNumber);
+            else if (byteNumber < 99)
+                portNumber = Int32.Parse("50" + byteNumber);
+            else if (byteNumber > 99)
+                portNumber = Int32.Parse("5" + byteNumber);
+
+            byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes("Port\n" + portNumber);
+            client.GetStream().Write(writeBytes, 0, writeBytes.Length);
+
             using (NetworkStream stream = client.GetStream())
             {
                 stream.ReadTimeout = 60000;
@@ -112,24 +126,30 @@ namespace Central_SMCS
                 process.StartInfo.FileName = ConfigurationManager.AppSettings["SMCSLocation"];
 
                 if (authCode == "")
-                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2}",
-                            userName,
-                            passWord,
-                            sessionToken
-                        );
-                else
-                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3}",
+                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -port {3}",
                             userName,
                             passWord,
                             sessionToken,
-                            authCode
+                            portNumber
                         );
-
+                else
+                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3} -port{4}",
+                            userName,
+                            passWord,
+                            sessionToken,
+                            authCode,
+                            portNumber
+                        );
+                
                 process.Start();
                 process.Close();
 
+                client.Close();
+
                 Console.WriteLine(DateTime.Now + " | Started: " + userName);
-            } catch {}
+            } catch {
+                Console.WriteLine("OMG ERROR");
+            }
         }
     }
 }

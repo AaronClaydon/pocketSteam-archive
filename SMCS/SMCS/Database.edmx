@@ -6,21 +6,9 @@
     <edmx:StorageModels>
     <Schema Namespace="DatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="DatabaseModelStoreContainer">
-          <EntitySet Name="Commands" EntityType="DatabaseModel.Store.Commands" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Messages" EntityType="DatabaseModel.Store.Messages" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="NewSessions" EntityType="DatabaseModel.Store.NewSessions" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Sessions" EntityType="DatabaseModel.Store.Sessions" store:Type="Tables" Schema="dbo" />
         </EntityContainer>
-        <EntityType Name="Commands">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="SessionToken" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="Type" Type="int" Nullable="false" />
-          <Property Name="CommandValue" Type="varchar(max)" />
-          <Property Name="DateCreated" Type="datetime" Nullable="false" />
-        </EntityType>
         <EntityType Name="Messages">
           <Key>
             <PropertyRef Name="id" />
@@ -29,17 +17,6 @@
           <Property Name="SessionToken" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="Message" Type="varchar(max)" Nullable="false" />
-          <Property Name="DateCreated" Type="datetime" Nullable="false" />
-        </EntityType>
-        <EntityType Name="NewSessions">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="SessionToken" Type="varchar(max)" Nullable="false" />
-          <Property Name="Username" Type="varchar(max)" Nullable="false" />
-          <Property Name="Password" Type="varchar(max)" Nullable="false" />
-          <Property Name="SteamGuardAuth" Type="varchar(max)" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Sessions">
@@ -53,6 +30,7 @@
           <Property Name="LastHeartbeat" Type="datetime" Nullable="false" />
           <Property Name="PassKey" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="Status" Type="tinyint" Nullable="false" />
+          <Property Name="SMCSPort" Type="int" Nullable="false" />
         </EntityType>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -61,8 +39,6 @@
         <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Sessions" EntityType="DatabaseModel.Session" />
           <EntitySet Name="Messages" EntityType="DatabaseModel.Message" />
-          <EntitySet Name="Commands" EntityType="DatabaseModel.Command" />
-          <EntitySet Name="NewSessions" EntityType="DatabaseModel.NewSession" />
         </EntityContainer>
         <EntityType Name="Session">
           <Key>
@@ -75,6 +51,7 @@
           <Property Name="LastHeartbeat" Nullable="false" Type="DateTime" />
           <Property Name="PassKey" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" Type="String" />
           <Property Name="Status" Nullable="false" Type="Byte" />
+          <Property Type="Int32" Name="SMCSPort" Nullable="false" />
         </EntityType>
         <EntityType Name="Message">
           <Key>
@@ -86,27 +63,6 @@
           <Property Type="String" Name="MessageValue" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" />
         </EntityType>
-        <EntityType Name="Command">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="SessionToken" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="Type" Nullable="false" />
-          <Property Type="String" Name="CommandValue" Nullable="true" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
-        </EntityType>
-        <EntityType Name="NewSession">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="SessionToken" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Username" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Password" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SteamGuardAuth" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -114,7 +70,8 @@
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="DatabaseModelStoreContainer" CdmEntityContainer="DatabaseEntities">
           <EntitySetMapping Name="Sessions"><EntityTypeMapping TypeName="DatabaseModel.Session"><MappingFragment StoreEntitySet="Sessions">
-            <ScalarProperty Name="id" ColumnName="id" />
+            <ScalarProperty Name="SMCSPort" ColumnName="SMCSPort" />
+                <ScalarProperty Name="id" ColumnName="id" />
             <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
             <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
             <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -128,29 +85,6 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="MessageValue" ColumnName="Message" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Commands">
-            <EntityTypeMapping TypeName="DatabaseModel.Command">
-              <MappingFragment StoreEntitySet="Commands">
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CommandValue" ColumnName="CommandValue" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="NewSessions">
-            <EntityTypeMapping TypeName="DatabaseModel.NewSession">
-              <MappingFragment StoreEntitySet="NewSessions">
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="SteamGuardAuth" ColumnName="SteamGuardAuth" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
@@ -179,8 +113,6 @@
       <Diagram Name="Database">
         <EntityTypeShape EntityType="DatabaseModel.Session" PointX="2.75" PointY="1.875" Width="1.5" Height="2.3648893229166665" IsExpanded="true" />
         <EntityTypeShape EntityType="DatabaseModel.Message" Width="1.5" PointX="5.375" PointY="0.75" Height="1.9802864583333331" />
-        <EntityTypeShape EntityType="DatabaseModel.Command" Width="1.5" PointX="5.125" PointY="4.5" Height="1.9802864583333335" />
-        <EntityTypeShape EntityType="DatabaseModel.NewSession" Width="1.5" PointX="0.75" PointY="5.75" Height="2.1725878906249996" />
       </Diagram>
     </Diagrams>
   </Designer>

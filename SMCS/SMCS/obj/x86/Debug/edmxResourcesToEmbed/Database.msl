@@ -4,6 +4,7 @@
     <EntitySetMapping Name="Sessions">
       <EntityTypeMapping TypeName="DatabaseModel.Session">
         <MappingFragment StoreEntitySet="Sessions">
+          <ScalarProperty Name="SMCSPort" ColumnName="SMCSPort" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
           <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
@@ -20,29 +21,6 @@
           <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="MessageValue" ColumnName="Message" />
           <ScalarProperty Name="Type" ColumnName="Type" />
-          <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
-          <ScalarProperty Name="id" ColumnName="id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Commands">
-      <EntityTypeMapping TypeName="DatabaseModel.Command">
-        <MappingFragment StoreEntitySet="Commands">
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="CommandValue" ColumnName="CommandValue" />
-          <ScalarProperty Name="Type" ColumnName="Type" />
-          <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
-          <ScalarProperty Name="id" ColumnName="id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="NewSessions">
-      <EntityTypeMapping TypeName="DatabaseModel.NewSession">
-        <MappingFragment StoreEntitySet="NewSessions">
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="SteamGuardAuth" ColumnName="SteamGuardAuth" />
-          <ScalarProperty Name="Password" ColumnName="Password" />
-          <ScalarProperty Name="Username" ColumnName="Username" />
           <ScalarProperty Name="SessionToken" ColumnName="SessionToken" />
           <ScalarProperty Name="id" ColumnName="id" />
         </MappingFragment>

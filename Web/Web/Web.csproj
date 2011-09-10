@@ -37,10 +37,6 @@
     <Reference Include="Newtonsoft.Json.Net35">
       <HintPath>..\..\..\..\..\..\Desktop\Libraries\JSON.net\Net35\Newtonsoft.Json.Net35.dll</HintPath>
     </Reference>
-    <Reference Include="SteamKit2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SteamRE\SteamKit2.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -79,10 +75,6 @@
       <DependentUpon>Database.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SteamHandler.cs" />
-    <Compile Include="Steam\CDNCache.cs" />
-    <Compile Include="Steam\Friend.cs" />
-    <Compile Include="Steam\SteamContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\webSteam.mdf" />

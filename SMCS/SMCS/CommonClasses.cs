@@ -5,6 +5,12 @@ using System.Text;
 
 namespace SMCS
 {
+    public class Command
+    {
+        public int Type;
+        public string CommandValue;
+    }
+
     public class FriendMessageSend
     {
         public string To;
