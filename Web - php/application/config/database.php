@@ -47,7 +47,7 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
+$db['default']['hostname'] = 'localhostFAKEHOSTLOL';
 $db['default']['username'] = 'pocketsteam';
 $db['default']['password'] = '82ZczSpM2NvRzXJd';
 $db['default']['database'] = 'pocketsteam';

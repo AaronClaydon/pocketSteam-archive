@@ -29,7 +29,7 @@ class Main extends CI_Controller {
 			$steamGuardKey = $_POST['steamGuardKey'];
 		}
 		//$userName = "azzytest"; //Lets use these values for the moment
-		//$passWord = "test123";
+		//$passWord = "testing123";
 
 		$sessionToken = uniqid();
 		$passKey = uniqid();
@@ -40,8 +40,13 @@ class Main extends CI_Controller {
 		$input .= $passWord . "\n";
 		$input .= $steamGuardKey . "";
 
+		//Get the CSMCS port from global
+		$this->load->model('configModel');
+		$globalConfig = $this->configModel->getConfig();
+		$csmcsPort = $globalConfig['CSMCS-Port'];
+
 		$this->load->model('tcpModel');
-		$CSMCSoutput = $this->tcpModel->sendServer(8165, $input);
+		$CSMCSoutput = $this->tcpModel->sendServer($csmcsPort, $input);
 		$CSMCSoutputArray = explode("\n", $CSMCSoutput);
 
 		if($CSMCSoutputArray[0] == "Port") {
@@ -79,10 +84,20 @@ class Main extends CI_Controller {
 	public function Display() {
 		echo "SessionToken" . $this->session->userdata('ps_sessionToken') . "<br />";
 		echo "PassKey" . $this->session->userdata('ps_passKey') . "<br />";
-			
+
+		$this->load->model('databaseModel');
+		$sessionData = $this->databaseModel->getSession($this->session->userdata('ps_sessionToken'), $this->session->userdata('ps_passKey'));
+
 		$this->load->model('tcpModel');
 		$value = '{\"To\":\"STEAM_0:1:20189445\",\"Message\":\"Hi\"}';
 		$message = '{"Type":2,"CommandValue":"' . $value . '"}';
-		echo $this->tcpModel->sendServer(5001, $message);
+		echo $this->tcpModel->sendServer($sessionData->SMCSPort, $message);
+	}
+
+	public function Config() {
+		$this->load->model('configModel');
+		$globalConfig = $this->configModel->getConfig();
+
+		echo $globalConfig['DB-Host'];
 	}
 }

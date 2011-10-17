@@ -45,7 +45,7 @@
                 
                 <div data-role="fieldcontain">
                     <label for="name">Password:</label><br />
-                    <input type="password" name="passWord" id="passWord" value="test123"/>
+                    <input type="password" name="passWord" id="passWord" value="testing123"/>
                 </div>  
 
                 <div data-role="fieldcontain" class="hidden">

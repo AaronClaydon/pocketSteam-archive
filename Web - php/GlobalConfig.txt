@@ -1,0 +1,10 @@
+DB-Host: localhost
+DB-Username: pocketSteam
+DB-Password: 82ZczSpM2NvRzXJd
+DB-Database: pocketSteam
+SMCS-Location: C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe
+##Login-Enabled: True
+##Max-Users: 200
+CSMCS-Port: 8165
+Timezone-Difference: -3600
+##OS: Windows

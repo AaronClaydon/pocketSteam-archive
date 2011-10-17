@@ -16,6 +16,9 @@
 */
 $config['base_url']	= '';
 
+//Have some LOVELY pocketSteam config here!!!!!
+$config['globalConfigLocation'] = 'C:\wamp\www\pocketsteam\GlobalConfig.txt';
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -57,7 +60,7 @@ $config['uri_protocol']	= 'AUTO';
 | http://codeigniter.com/user_guide/general/urls.html
 */
 
-$config['url_suffix'] = 'index.php';
+$config['url_suffix'] = '';
 
 /*
 |--------------------------------------------------------------------------
