@@ -263,7 +263,6 @@ namespace SMCS
 
         public static void TimeOutCheck()
         {
-            /*
             while (Update)
             {
                 try
@@ -287,7 +286,6 @@ namespace SMCS
 
                 Thread.Sleep(10000);
             }
-             */
         }
     }
 }

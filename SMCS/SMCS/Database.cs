@@ -70,7 +70,7 @@ namespace SMCS
         public static double UnixTime()
         {
             DateTime epoch = new DateTime(1970, 1, 1);
-            double unixTime = (DateTime.Now - epoch).TotalSeconds - 3600;
+            double unixTime = (DateTime.Now - epoch).TotalSeconds + Int32.Parse(GlobalConfig.Get()["Timezone-Difference"]);
 
             return unixTime;
         }
