@@ -10,3 +10,4 @@ C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\D
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.dll
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.pdb
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.xml
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\mysql.data.dll

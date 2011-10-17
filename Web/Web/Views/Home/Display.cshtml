@@ -78,6 +78,8 @@
         
         SendCommand(1);
         ChangeInfo(3);
+
+        setTimeout("location.href='/'", 2000);
     }
 
     function LoadData() {
@@ -87,8 +89,6 @@
             success: function (data) {
                 //alert('Return: ' + data)
                 var obj = jQuery.parseJSON(data);
-
-                ChangeInfo(obj.Status);
 
                 for (message in obj.Messages) {
                     var msgType = obj.Messages[message].Type;
@@ -100,15 +100,17 @@
                         user_Avatar = msg.AvatarURL;
                         user_State = msg.State;
                     } else if (msgType == 2) {
-                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '(' + msg.SteamID + ')</strong>: ' + msg.Message);
+                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '</strong>: ' + msg.Message);
                     } else if (msgType == 3) {
-                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '(' + msg.SteamID + ')</strong> ' + msg.Message);
+                        AddToMessages(msg.SteamID, msg.SteamName, '<br /><strong>' + msg.SteamName + '</strong> ' + msg.Message);
                     } else if (msgType == 4) {
                         ChangeFriends(msg);
                     } else {
                         alert('unknown type');
                     }
                 }
+
+                ChangeInfo(obj.Status);
             },
             error: function (data) {
                 alert('ERROR ' + val);
@@ -137,7 +139,11 @@
                 display = false;
             }
             var id = friend.SteamID.split(':')[2];
-            friendsContent = friendsContent + '<a href="#" onClick="' + "ChangeTab('Chat" + id + "', '" + id + "', '" + friend.SteamName + "', '" + friend.SteamID + "')" + '"><div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"><b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div></a>';
+            if(display) {
+                friendsContent = friendsContent + '<a href="#" onClick="' + "ChangeTab('Chat" + id + "', '" + id + "', '" + friend.SteamName + "', '" + friend.SteamID + "')" + '"><div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"> <b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div></a>';
+            } else {
+                friendsContent = friendsContent + '<div class="friend"><img src="' + friend.AvatarURL + '" alt="Avatar" class="steam_' + avatarState + '"> <b>' + friend.SteamName + '</b> - <span>' + friend.State + '<span></div>';
+            }
             if(display) {
                 amtOnline++;
             }
@@ -151,19 +157,30 @@
     function ChangeInfo(status) {
         var statusText;
         if (status == 1) {
-            statusText = "<font color='Blue'>Connecting....</font>";
+            statusText = '<font color="Blue">Connecting....</font><br />';
         } else if (status == 2) {
-            statusText = "<font color='Gren'>Connected</font>";
+            statusText = '<font color="Gren">Connected</font> [<a href="#" onClick="Disconnect()">Disconnect</a>]<br />';
         } else if (status == 3) {
-            statusText = "<font color='Red'>Disconnected</font>";
+            statusText = '<font color="Red">Disconnected</font><br />';
         }
 
         var info = "";
         if (user_SteamID != undefined) {
-            info = '<img src="' + user_Avatar + '" alt="avatar"/>' + user_SteamName + ' (' + user_SteamID + ')<br/>' + user_State;
+            var rawState = user_State.split(' ');
+            var avatarState = "online";
+            if (user_State == "Online" || user_State == "Away" || user_State == "Busy" || user_State == "Snooze") {
+                avatarState = "online";
+            } else if (rawState[0] == "Playing") {
+                avatarState = "ingame";
+            } else {
+                avatarState = "offline";
+                display = false;
+            }
+
+            info = '<div class="friend"><img src="' + user_Avatar + '" alt="avatar" class="steam_' + avatarState + '"/> ' + user_SteamName + '<span> - ' + user_State + "</span></div><br />";
         }
 
-        $("#Info").html(statusText + '<br />' + info + '<br /><a href="#" onClick="Disconnect()">Disconnect</a>');
+        $("#Info").html(info + statusText);
     }
 
     function AddToMessages(steamid, name, message) {

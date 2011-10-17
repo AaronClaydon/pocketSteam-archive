@@ -1,0 +1,49 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+    <title>Login - pocketSteam</title> 
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
+    <link rel="stylesheet" href="mobile.css" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
+
+    <script type="text/javascript" src="mobile.js"></script>
+    <script type="text/javascript">
+        loginPage();
+    </script>
+</head> 
+<body> 
+
+<div data-role="page">
+
+    <div data-role="header">
+        <a href="index.html" data-icon="grid">Desktop</a>
+        <h1>Login - pocketSteam</h1>
+        <a href="faq.html" data-rel="dialog" data-icon="info">FAQ</a>
+    </div>
+
+    <div data-role="content">
+        <div class="loginForm">
+            <div id="loginMessage" class="">Please enter your Steam username and password below</div>
+            <form action="#" method="post" id="loginForm">
+                <div data-role="fieldcontain">
+                    <label for="name">Username:</label><br />
+                    <input type="text" name="userName" id="userName" value=""/>
+                </div> 
+                
+                <div data-role="fieldcontain">
+                    <label for="name">Password:</label><br />
+                    <input type="password" name="passWord" id="passWord" value=""/>
+                </div>  
+
+                <button type="submit" data-theme="b" id="loginButton">Login to Steam</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

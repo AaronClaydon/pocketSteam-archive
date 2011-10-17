@@ -1,0 +1,13 @@
+.loginForm {
+	width: 400px;
+	margin: 0% auto;
+	text-align: center;
+}
+
+.loginError {
+	color: red;
+}
+
+.loginNotice {
+	color: green;
+}

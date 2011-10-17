@@ -26,15 +26,12 @@ namespace SMCS
 
             if ( type == EChatEntryType.ChatMsg || type == EChatEntryType.Emote )
             {
-                /*
                 if (friendMsg.Message == "Away")
                     Steam3.SteamFriends.SetPersonaState(EPersonaState.Away);
                 else if (friendMsg.Message == "Busy")
                     Steam3.SteamFriends.SetPersonaState(EPersonaState.Busy);
                 else if (friendMsg.Message == "Online")
                     Steam3.SteamFriends.SetPersonaState(EPersonaState.Online);
-                */
-                DatabaseEntities db = new DatabaseEntities();
 
                 int messageType = 2;
                 if (type == EChatEntryType.Emote)
@@ -52,16 +49,7 @@ namespace SMCS
                 };
                 string messageJson = JsonConvert.SerializeObject(messageObject);
 
-                Message message = new Message
-                {
-                    SessionToken = Program.sessionToken,
-                    Type = messageType,
-                    MessageValue = messageJson,
-                    DateCreated = DateTime.Now
-                };
-
-                db.Messages.AddObject(message);
-                db.SaveChanges();
+                Database.AddMessage(messageType, messageJson);
             }
         }
     }

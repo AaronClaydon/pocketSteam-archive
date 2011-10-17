@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using SteamKit2;
 using Newtonsoft.Json;
+using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace SMCS
 {
     class SteamCallback : ICallbackHandler
     {
-        DatabaseEntities db = new DatabaseEntities();
-
         public void HandleCallback(CallbackMsg msg)
         {
             if (msg.IsType<SteamFriends.PersonaStateCallback>())
@@ -47,15 +47,7 @@ namespace SMCS
                     };
                     string messageJson = JsonConvert.SerializeObject(messageObject);
 
-                    Message message = new Message
-                    {
-                        SessionToken = Program.sessionToken,
-                        Type = 1,
-                        MessageValue = messageJson,
-                        DateCreated = DateTime.Now
-                    };
-                    db.Messages.AddObject(message);
-                    db.SaveChanges();
+                    Database.AddMessage(1, messageJson);
                 }
                 else
                 {
@@ -115,38 +107,25 @@ namespace SMCS
                         //friends.Add(friendID.ToString(), messageObject);
                         friends.Add(messageObject);
                     }
-
+                    /*
                     //Delete other friends lists in DB
                     List<Message> queuedMessages = db.Messages.Where(d => d.Type == 4).ToList();
                     foreach (Message toDeleteMsg in queuedMessages)
                     {
                         db.Messages.DeleteObject(toDeleteMsg);
                     }
-
-                    db.SaveChanges();
-
+                    */
+#warning ADD DELETE CODE HERE
                     friends = friends.OrderBy(d => d.StateID).ThenBy(d => d.SteamName).ToList();
                     string messageJson = JsonConvert.SerializeObject(friends);
 
-                    Message message = new Message
-                    {
-                        SessionToken = Program.sessionToken,
-                        Type = 4,
-                        MessageValue = messageJson,
-                        DateCreated = DateTime.Now
-                    };
-                    db.Messages.AddObject(message);
-                    db.SaveChanges();
-
-                    Program.FriendsSent++;
-
-                    Console.Title = "SMCS / " + Program.userName + " / " + Program.FriendsSent + " / Port: " + Program.portNumber;
+                    Database.AddMessage(4, messageJson);
                 }
             }
 
             if (msg.IsType<SteamUser.LoggedOffCallback>())
             {
-                var callback = (SteamUser.LoggedOffCallback)msg;
+                SteamUser.LoggedOffCallback callback = (SteamUser.LoggedOffCallback)msg;
 
                 Program.ShutDown("you were logged off");
 
@@ -167,15 +146,19 @@ namespace SMCS
                 {
                     try
                     {
-                        Session session = db.Sessions.Single(d => d.SessionToken == Program.sessionToken);
-                        session.Status = 2;
-                        db.SaveChanges();
+                        MySqlCommand command = new MySqlCommand();
+                        command.CommandText = "UPDATE sessions SET Status=@Status WHERE SessionToken=@SessionToken";
+                        command.Parameters.AddWithValue("@Status", 2);
+                        command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
+                        Database.Command(command);
+
+                        command.Dispose();
 
                         Program.steamConnectionReply = "Success";
                     }
                     catch 
                     {
-                        Environment.Exit(0);
+                        Program.ShutDown("Can not update DB session");
                     }
                 }
                 else if (logOnResp.Result == EResult.InvalidPassword)
@@ -183,7 +166,7 @@ namespace SMCS
                     Steam3.Shutdown();
                     Program.steamConnectionReply = "Invalid";
                     Steam3.RemoveHandler(this);
-                    Program.ShutDown("SteamGuard");
+                    Program.ShutDown("Invalid");
                 }
                 else if (logOnResp.Result == EResult.AccountLogonDenied || logOnResp.Result == EResult.InvalidLoginAuthCode)
                 {

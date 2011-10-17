@@ -7,6 +7,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Net;
+using MySql.Data.MySqlClient;
 
 namespace SMCS
 {
@@ -26,11 +27,7 @@ namespace SMCS
         public static TcpListener server { get; set; }
         public static bool firstConnection = true;
         public static string steamConnectionReply = "";
-
-        public static int FriendsSent = 0;
-
-        static DatabaseEntities db = new DatabaseEntities();
-        
+       
         [STAThread]
         static void Main(string[] args)
         {
@@ -58,6 +55,7 @@ namespace SMCS
                 i++;
             }
 
+
             if (userName != string.Empty && passWord != string.Empty)
             {
                 Thread serverThread = new Thread(new ThreadStart(StartServer));
@@ -67,6 +65,19 @@ namespace SMCS
             }
             else
                 return;
+            /*
+            try
+            {
+                int amtSessions = db.Sessions.Where(d => d.SessionToken == sessionToken).Count();
+                if (amtSessions != 1)
+                    steamConnectionReply = "NO_SUCH_SESSION";
+            }
+            catch
+            {
+                steamConnectionReply = "DB_ERROR";
+                Program.ShutDown("Startup session check DB error");
+            }
+             */
         }
 
         static void StartServer()
@@ -118,6 +129,18 @@ namespace SMCS
                     }
                     catch { }
                 }
+
+                byte[] repeatBytes = ASCIIEncoding.ASCII.GetBytes("RepeatSteamReply");
+                if(bytes == repeatBytes) 
+                {
+                    if (steamConnectionReply != "")
+                    {
+                        byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes(steamConnectionReply);
+                        client.GetStream().Write(writeBytes, 0, writeBytes.Length);
+                        client.Close();
+                        firstConnection = false;
+                    }
+                }
  
                 //Lets loop all friends into a dictionary for message sending
                 Dictionary<String, SteamID> friends = new Dictionary<string, SteamID>();
@@ -153,9 +176,6 @@ namespace SMCS
                     }
                     catch { }
                 }
-
-
-                Console.WriteLine();
             }
             else
             {
@@ -195,30 +215,33 @@ namespace SMCS
                 Program.ShutDown("can not init2");
             }
 
-            db.CommandTimeout = 0;
             TimeoutCheckThread = new Thread(new ThreadStart(TimeOutCheck));
             TimeoutCheckThread.Name = "Timeout Check";
             TimeoutCheckThread.Start();
 
-            SteamUpdateThread = new Thread(new ThreadStart(SteamUpdate)) { Name = "Steam update" };
-            SteamUpdateThread.Start();
-
             SteamCallback callback = new SteamCallback();
             Steam3.AddHandler(callback);
+
+            Thread.Sleep(200);
+
+            SteamUpdateThread = new Thread(new ThreadStart(SteamUpdate)) { Name = "Steam update" };
+            SteamUpdateThread.Start();
         }
 
         public static void ShutDown(string reason)
         {
             Console.WriteLine("END: " + reason);
+            steamConnectionReply = reason;
 
             Steam3.Shutdown();
             try
             {
-                Session session = db.Sessions.Single(d => d.SessionToken == Program.sessionToken);
+                MySqlCommand command = new MySqlCommand();
+                command.CommandText = "DELETE FROM sessions WHERE SessionToken=@SessionToken";
+                command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
 
-                db.Sessions.DeleteObject(session);
-                db.SaveChanges();
-                db.Dispose();
+                Database.Command(command);
+                command.Dispose();
             }
             catch { }
             Thread.Sleep(500);
@@ -230,35 +253,41 @@ namespace SMCS
         {
             while (Update)
             {
-                Steam3.Update();
+                try
+                {
+                    Steam3.Update();
+                } catch { }
                 Thread.Sleep(1);
             }
         }
 
         public static void TimeOutCheck()
         {
+            /*
             while (Update)
             {
                 try
                 {
-                    Session session = db.Sessions.Single(d => d.SessionToken == Program.sessionToken);
+                    Session session = Database.GetSession(Program.sessionToken);
 
-                    db.Refresh(System.Data.Objects.RefreshMode.ClientWins, session);
-
-                    TimeSpan timeSinceLastHeartbeat = (DateTime.Now - session.LastHeartbeat);
-                    if (timeSinceLastHeartbeat.TotalSeconds >= 30)
+                    double timeSinceLastHeartbeat =  Database.UnixTime() - session.LastHeartbeat;
+                    if (timeSinceLastHeartbeat >= 30)
                     {
+                        //Console.WriteLine(timeSinceLastHeartbeat + " - " + Database.UnixTime());
                         Program.ShutDown("timeout");
                         break;
                     }
+
+                    Console.Title = "SMCS / " + Program.userName + " / Last ping: " + Math.Round(timeSinceLastHeartbeat) + " / Port: " + Program.portNumber;
                 }
                 catch
                 {
-                    Environment.Exit(0);
+                    Program.ShutDown("Timeout check error");
                 }
 
                 Thread.Sleep(10000);
             }
+             */
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Central_SMCS
 
             while (serverOnline)
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                ConsoleKeyInfo key = Console.ReadKey();
 
                 if (key.Key == ConsoleKey.Escape)
                 {
@@ -53,7 +53,7 @@ namespace Central_SMCS
             Console.Write("Starting socket...");
             try
             {
-                server = new TcpListener(IPAddress.Any, 8165);
+                server = new TcpListener(IPAddress.Any, Int32.Parse(GlobalConfig.Get()["CSMCS-Port"]));
                 server.Start();
             }
             catch
@@ -123,17 +123,17 @@ namespace Central_SMCS
                 string authCode = dataArray[3];
 
                 Process process = new Process();
-                process.StartInfo.FileName = ConfigurationManager.AppSettings["SMCSLocation"];
+                process.StartInfo.FileName = GlobalConfig.Get()["SMCS-Location"];
 
                 if (authCode == "")
-                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -port {3}",
+                    process.StartInfo.Arguments += String.Format(" -username {0} -password {1} -sessionToken {2} -port {3}",
                             userName,
                             passWord,
                             sessionToken,
                             portNumber
                         );
                 else
-                    process.StartInfo.Arguments = String.Format("-username {0} -password {1} -sessionToken {2} -authcode {3} -port{4}",
+                    process.StartInfo.Arguments += String.Format(" -username {0} -password {1} -sessionToken {2} -authcode {3} -port {4}",
                             userName,
                             passWord,
                             sessionToken,
@@ -147,8 +147,8 @@ namespace Central_SMCS
                 client.Close();
 
                 Console.WriteLine(DateTime.Now + " | Started: " + userName);
-            } catch {
-                Console.WriteLine("OMG ERROR");
+            } catch(Exception ex) {
+                Console.WriteLine("Could not start SMCS - " + ex.Message);
             }
         }
     }

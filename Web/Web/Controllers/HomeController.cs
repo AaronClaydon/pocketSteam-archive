@@ -134,18 +134,42 @@ namespace Web.Controllers
 
             while (waitingForReply)
             {
-                if ((DateTime.Now - SMCSTimeout).TotalSeconds > 40)
-                {
-                    waitingForReply = false;
-                    return Content("pocketSteamOffline");
-                }
-
                 if (client.Available > 0)
                 {
                     byte[] readBytes = new byte[client.Available];
                     ns.Read(readBytes, 0, readBytes.Length);
                     SMCSReply = System.Text.ASCIIEncoding.ASCII.GetString(readBytes);
                     waitingForReply = false;
+                }
+
+                if ((DateTime.Now - SMCSTimeout).TotalSeconds > 20)
+                {
+                    waitingForReply = false;
+                    return Content("pocketSteamOffline");
+                }
+            }
+
+            if (SMCSReply == "\n")
+            {
+                byte[] repeatReplyByte = { 0x12, 0x018 };
+                ns.Write(repeatReplyByte, 0, repeatReplyByte.Length);
+                waitingForReply = true;
+
+                while (waitingForReply)
+                {
+                    if (client.Available > 0)
+                    {
+                        byte[] readBytes = new byte[client.Available];
+                        ns.Read(readBytes, 0, readBytes.Length);
+                        SMCSReply = System.Text.ASCIIEncoding.ASCII.GetString(readBytes);
+                        waitingForReply = false;
+                    }
+
+                    if ((DateTime.Now - SMCSTimeout).TotalSeconds > 10)
+                    {
+                        waitingForReply = false;
+                        return Content("pocketSteamOffline");
+                    }
                 }
             }
 

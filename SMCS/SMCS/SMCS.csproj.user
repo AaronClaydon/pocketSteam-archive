@@ -12,6 +12,6 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>-username azzytest -password test123 -sessionToken ae3fc79caa243a4ea4abab3a102291f052b9</StartArguments>
+    <StartArguments>-username azzytest -password test123 -sessionToken 4e8e1b2de175b</StartArguments>
   </PropertyGroup>
 </Project>

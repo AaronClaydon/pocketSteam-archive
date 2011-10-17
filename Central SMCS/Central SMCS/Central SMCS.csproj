@@ -10,7 +10,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Central_SMCS</RootNamespace>
     <AssemblyName>Central SMCS</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,9 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -46,24 +43,17 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Database.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="GlobalConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="Database.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Database.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
