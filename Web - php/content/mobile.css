@@ -1,8 +1,12 @@
-﻿.loginForm {
+﻿.loginForm, .displayContent {
 	width: 100%;
 	max-width: 600px;
 	margin: 0% auto;
 	text-align: center;
+}
+
+.displayContent {
+	text-align: left;
 }
 
 .loginError {
@@ -15,4 +19,38 @@
 
 .hidden {
 	display: none;
+}
+
+.steam_offline, .steam_online, .steam_ingame 
+{
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    vertical-align: middle;
+
+    width: 48px;
+    height: 48px;
+}
+
+.steam_offline 
+{
+    border: 4px #999 solid;
+}
+
+.steam_online 
+{
+    border: 4px #5698C9 solid;
+}
+
+.steam_ingame 
+{
+    border: 4px #98C460 solid;
+}
+
+.friend {
+	margin: 4px;
+}
+
+.friend span {
+	color: gray;
 }

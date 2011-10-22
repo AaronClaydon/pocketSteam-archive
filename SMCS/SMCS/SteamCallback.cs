@@ -40,10 +40,10 @@ namespace SMCS
 
                     SteamUserData messageObject = new SteamUserData
                     {
-                        SteamID = Steam3.SteamUser.GetSteamID().ToString(),
-                        SteamName = Steam3.SteamFriends.GetPersonaName(),
-                        AvatarURL = avatarUrl,
-                        State = playerState
+                        SID = Steam3.SteamUser.GetSteamID().ToString(),
+                        N = Steam3.SteamFriends.GetPersonaName(),
+                        A = avatarUrl,
+                        St = playerState
                     };
                     string messageJson = JsonConvert.SerializeObject(messageObject);
 
@@ -97,26 +97,18 @@ namespace SMCS
 
                         SteamUserData messageObject = new SteamUserData
                         {
-                            SteamID = friendID.ToString(),
-                            SteamName = Steam3.SteamFriends.GetFriendPersonaName(friendID),
-                            AvatarURL = avatarUrl,
-                            State = playerState,
-                            StateID = stateID
+                            SID = friendID.ToString(),
+                            N = Steam3.SteamFriends.GetFriendPersonaName(friendID),
+                            A = avatarUrl,
+                            St = playerState,
+                            StID = stateID
                         };
 
                         //friends.Add(friendID.ToString(), messageObject);
                         friends.Add(messageObject);
                     }
-                    /*
-                    //Delete other friends lists in DB
-                    List<Message> queuedMessages = db.Messages.Where(d => d.Type == 4).ToList();
-                    foreach (Message toDeleteMsg in queuedMessages)
-                    {
-                        db.Messages.DeleteObject(toDeleteMsg);
-                    }
-                    */
-#warning ADD DELETE CODE HERE
-                    friends = friends.OrderBy(d => d.StateID).ThenBy(d => d.SteamName).ToList();
+
+                    friends = friends.OrderBy(d => d.StID).ThenBy(d => d.N).ToList();
                     string messageJson = JsonConvert.SerializeObject(friends);
 
                     Database.AddMessage(4, messageJson);
@@ -127,14 +119,13 @@ namespace SMCS
             {
                 SteamUser.LoggedOffCallback callback = (SteamUser.LoggedOffCallback)msg;
 
-                Program.ShutDown("you were logged off");
+                Program.Shutdown("you were logged off");
 
                 return;
             }
 
             if (msg.IsType<SteamFriends.FriendsListCallback>())
             {
-                //selfControl.SetSteamID(new Friend(Steam3.SteamUser.GetSteamID()));
                 Steam3.SteamFriends.SetPersonaState(EPersonaState.Online);
             }
 
@@ -158,7 +149,7 @@ namespace SMCS
                     }
                     catch 
                     {
-                        Program.ShutDown("Can not update DB session");
+                        Program.Shutdown("Can not update DB session");
                     }
                 }
                 else if (logOnResp.Result == EResult.InvalidPassword)
@@ -166,28 +157,28 @@ namespace SMCS
                     Steam3.Shutdown();
                     Program.steamConnectionReply = "Invalid";
                     Steam3.RemoveHandler(this);
-                    Program.ShutDown("Invalid");
+                    Program.Shutdown("Invalid");
                 }
                 else if (logOnResp.Result == EResult.AccountLogonDenied || logOnResp.Result == EResult.InvalidLoginAuthCode)
                 {
                     Steam3.Shutdown();
                     Program.steamConnectionReply = "SteamGuard";
                     Steam3.RemoveHandler(this);
-                    Program.ShutDown("SteamGuard");
+                    Program.Shutdown("SteamGuard");
                 }
                 else if (logOnResp.Result == EResult.AlreadyLoggedInElsewhere)
                 {
                     Steam3.Shutdown();
                     Program.steamConnectionReply = "LoggedInElsewhere";
                     Steam3.RemoveHandler(this);
-                    Program.ShutDown("LoggedInElseWhere");
+                    Program.Shutdown("LoggedInElseWhere");
                 }
                 else if (logOnResp.Result != EResult.OK)
                 {
                     Steam3.Shutdown();
                     Program.steamConnectionReply = "UnknownConnectFail " + logOnResp.Result;
                     Steam3.RemoveHandler(this);
-                    Program.ShutDown("UnknownConnectFail");
+                    Program.Shutdown("UnknownConnectFail");
                 }
             }
 
@@ -202,14 +193,14 @@ namespace SMCS
 
                 if (friendAdded.Result != EResult.OK)
                 {
-                    Program.ShutDown("friend added error");
+                    Program.Shutdown("friend added error");
                 }
             }
             try
             {
                 msg.Handle<SteamClient.DisconnectCallback>((callback) =>
                 {
-                    Program.ShutDown("disconnect callback");
+                    Program.Shutdown("disconnect callback");
 
                     return;
                 });

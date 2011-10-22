@@ -74,20 +74,14 @@ namespace Central_SMCS
 
         void ProcessClient(object clientObject)
         {
+            Dictionary<String, String> globalConfig = GlobalConfig.Get();
             TcpClient client = (TcpClient)clientObject;
 
             byte[] bytes = new byte[1024];
             StringBuilder clientData = new StringBuilder();
 
             byteNumber += 1;
-            int portNumber = 0;
-
-            if (byteNumber < 9)
-                portNumber = Int32.Parse("500" + byteNumber);
-            else if (byteNumber < 99)
-                portNumber = Int32.Parse("50" + byteNumber);
-            else if (byteNumber > 99)
-                portNumber = Int32.Parse("5" + byteNumber);
+            int portNumber = Int32.Parse(byteNumber.ToString(globalConfig["SMCS-Base-Port"]));
 
             byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes("Port\n" + portNumber);
             client.GetStream().Write(writeBytes, 0, writeBytes.Length);
@@ -123,7 +117,7 @@ namespace Central_SMCS
                 string authCode = dataArray[3];
 
                 Process process = new Process();
-                process.StartInfo.FileName = GlobalConfig.Get()["SMCS-Location"];
+                process.StartInfo.FileName = globalConfig["SMCS-Location"];
 
                 if (authCode == "")
                     process.StartInfo.Arguments += String.Format(" -username {0} -password {1} -sessionToken {2} -port {3}",

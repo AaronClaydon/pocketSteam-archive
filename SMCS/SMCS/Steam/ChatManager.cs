@@ -36,16 +36,22 @@ namespace SMCS
                 int messageType = 2;
                 if (type == EChatEntryType.Emote)
                     messageType = 3;
-
-
+                /*
+                if(friendMsg.Message == "Away")
+                    Steam3.SteamFriends.SetPersonaState(EPersonaState.Away);
+                else if(friendMsg.Message == "Busy")
+                    Steam3.SteamFriends.SetPersonaState(EPersonaState.Busy);
+                else if(friendMsg.Message == "Online")
+                    Steam3.SteamFriends.SetPersonaState(EPersonaState.Online);
+                */
                 string steamMessage = System.Text.RegularExpressions.Regex.Replace(friendMsg.Message, "<", "&lt;");
                 steamMessage = System.Text.RegularExpressions.Regex.Replace(steamMessage, ">", "&gt;");
 
                 FriendMessageData messageObject = new FriendMessageData
                 {
-                    SteamID = friendMsg.Sender.ToString(),
-                    SteamName = Steam3.SteamFriends.GetFriendPersonaName(friendMsg.Sender),
-                    Message = steamMessage
+                    SID = friendMsg.Sender.ToString(),
+                    N = Steam3.SteamFriends.GetFriendPersonaName(friendMsg.Sender),
+                    M = steamMessage
                 };
                 string messageJson = JsonConvert.SerializeObject(messageObject);
 

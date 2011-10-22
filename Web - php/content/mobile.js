@@ -1,5 +1,6 @@
-function loginPage() {
+function LoginPage() {
 	$(document).ready(function(){
+		clearInterval(heartbeatTimer); //Incase for some reason it didn't end (IT HAPPENS)
 		$("#loginButton").click(function() { 
 			DisableTextBoxes();
 			$("#loginMessage").removeClass();
@@ -11,7 +12,7 @@ function loginPage() {
 			$.ajax({
                 type: "POST",
                 data: dataString,
-                url: "index.php/main/login",
+                url: loginUrl,
 
                 success: function (data) {
 	                var splitData = data.split(':');
@@ -19,8 +20,7 @@ function loginPage() {
 	                EnableTextBoxes();
 	                
 	                if(splitData[0] == "Success") {
-	                	var gotoLocation = "index.php/main/display";
-	                	window.location.replace(gotoLocation);
+	                	window.location = displayUrl;
 
 	                } else if(splitData[0] == "pocketSteamOffline") {
 	                	$("#loginMessage").removeClass();
@@ -49,17 +49,16 @@ function loginPage() {
 		});
 
 		function DisableTextBoxes() {
-			$.mobile.pageLoading();  
+			$.mobile.showPageLoadingMsg();
 			$("#userName").attr('disabled', 'disabled');
 			$("#passWord").attr('disabled', 'disabled');
 			$("#steamGuardKey").attr('disabled', 'disabled');
 			$("#loginButton").parent().find('.ui-btn-text').text('Please wait');
 			$("#loginButton").attr('disabled', 'disabled');
-			
 		}
 
 		function EnableTextBoxes() {
-			$.mobile.pageLoading(true);
+			$.mobile.hidePageLoadingMsg();
 			$("#userName").removeAttr('disabled');
 			$("#passWord").removeAttr('disabled');
 			$("#steamGuardKey").removeAttr('disabled');
@@ -67,4 +66,31 @@ function loginPage() {
 			$("#loginButton").removeAttr('disabled');
 		}
 	});
+}
+
+function ParseData(data) {
+	if(data == "Expired") {
+		$("#reply").html('Session Expired!');
+		return;
+	}
+
+	var json = jQuery.parseJSON(data);
+	
+
+	for (message in json.M) {
+    	var msgType = json.M[message].T;
+    	var msg = jQuery.parseJSON(json.M[message].M);
+
+    	if(msgType == 1) {
+    		userData = msg;
+    		UpdateInfo();
+    	}
+    	else if(msgType == 2) {
+    		alert(msg.N + ' said: ' + msg.M);
+    	}
+    }
+}
+
+function UpdateInfo() {
+	$("#reply").html('<div class="friend"><img src="' + userData['A'] + '" alt="Avatar" class="steam_online"> ' + userData['N'] + ' - <span>' + userData['St'] + '</span></div>');
 }

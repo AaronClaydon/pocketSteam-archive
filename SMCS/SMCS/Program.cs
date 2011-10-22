@@ -90,7 +90,7 @@ namespace SMCS
             }
             catch
             {
-                Program.ShutDown("Server Startup Failed");
+                Program.Shutdown("Server Startup Failed");
                 return;
             }
             Console.WriteLine("Done");
@@ -154,7 +154,7 @@ namespace SMCS
                 Command command = JsonConvert.DeserializeObject<Command>(receivedData.ToString());
                 if (command.Type == 1)
                 {
-                    Steam3.Shutdown();
+                    Program.Shutdown("Logout request");
                 }
                 else if (command.Type == 2)
                 {
@@ -212,7 +212,7 @@ namespace SMCS
             }
             catch
             {
-                Program.ShutDown("can not init2");
+                Program.Shutdown("can not init2");
             }
 
             TimeoutCheckThread = new Thread(new ThreadStart(TimeOutCheck));
@@ -228,7 +228,7 @@ namespace SMCS
             SteamUpdateThread.Start();
         }
 
-        public static void ShutDown(string reason)
+        public static void Shutdown(string reason)
         {
             Console.WriteLine("END: " + reason);
             steamConnectionReply = reason;
@@ -236,8 +236,17 @@ namespace SMCS
             Steam3.Shutdown();
             try
             {
+                //Delete session
                 MySqlCommand command = new MySqlCommand();
                 command.CommandText = "DELETE FROM sessions WHERE SessionToken=@SessionToken";
+                command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
+
+                Database.Command(command);
+                command.Dispose();
+
+                //Delete orphaned messages
+                command = new MySqlCommand();
+                command.CommandText = "DELETE FROM messages WHERE SessionToken=@SessionToken";
                 command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
 
                 Database.Command(command);
@@ -273,7 +282,7 @@ namespace SMCS
                     if (timeSinceLastHeartbeat >= 30)
                     {
                         //Console.WriteLine(timeSinceLastHeartbeat + " - " + Database.UnixTime());
-                        Program.ShutDown("timeout");
+                        Program.Shutdown("timeout");
                         break;
                     }
 
@@ -281,7 +290,7 @@ namespace SMCS
                 }
                 catch
                 {
-                    Program.ShutDown("Timeout check error");
+                    Program.Shutdown("Timeout check error");
                 }
 
                 Thread.Sleep(10000);

@@ -19,17 +19,17 @@ namespace SMCS
 
     class FriendMessageData
     {
-        public string SteamID;
-        public string SteamName;
-        public string Message;
+        public string SID; //SteamID
+        public string N; //Steam name
+        public string M; //Message
     }
 
     class SteamUserData
     {
-        public string SteamID;
-        public string SteamName;
-        public string AvatarURL;
-        public int StateID;
-        public string State;
+        public string SID; //SID
+        public string N; //Steam name
+        public string A; //Avatar URL
+        public int StID; //State ID
+        public string St; //State
     }
 }

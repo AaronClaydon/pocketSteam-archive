@@ -2,13 +2,18 @@
 
 class Admin extends CI_Controller {
 
+	var $adminPassword;
+
 	function __construct() {
-		define("ADMIN_PASSCODE", '8167');
 		parent::__construct();
+
+		$this->load->model('configModel');
+		$config = $this->configModel->getConfig();
+		$this->adminPassword = $config['Admin-Password'];
 	}
 
-	private function authed() {
-    	if($this->session->userdata('ps_admin_authcode') == ADMIN_PASSCODE) {
+	function authed() {
+    	if($this->session->userdata('ps_admin_authcode') == $this->adminPassword) {
     		return true;
 	    } else {
     		$this->load->view('Admin/login');
@@ -20,12 +25,12 @@ class Admin extends CI_Controller {
 		$authed = $this->authed();
 
 		if($authed) {
-			echo 'ADMIN';
+			$this->load->view('Admin/index');
 		}
 	}
 
 	public function login() {
-		if($_POST['password'] == ADMIN_PASSCODE) {
+		if($_POST['password'] == $this->adminPassword) {
 			$this->session->set_userdata('ps_admin_authcode', $_POST['password']);
 			echo 'Done';
 		} else {
