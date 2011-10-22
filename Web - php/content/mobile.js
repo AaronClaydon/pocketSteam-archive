@@ -84,13 +84,27 @@ function ParseData(data) {
     	if(msgType == 1) {
     		userData = msg;
     		UpdateInfo();
-    	}
-    	else if(msgType == 2) {
+    	} else if(msgType == 2) {
     		alert(msg.N + ' said: ' + msg.M);
+    	} else if(msgType == 3) {
+    		//EMOTE MESSAGES!
+    	} else if(msgType == 4) {
+    		friends = msg;
+    		UpdateFriends();
+    	} else if (msgType == 5) {
+    		$("#globalMessages").append('<div class="info">' + msg.GM + '</div>');
     	}
     }
 }
 
 function UpdateInfo() {
 	$("#reply").html('<div class="friend"><img src="' + userData['A'] + '" alt="Avatar" class="steam_online"> ' + userData['N'] + ' - <span>' + userData['St'] + '</span></div>');
+}
+
+function UpdateFriends() {
+	for (friendID in friends) {
+		var friend = friends[friendID];
+
+		//alert(friend.N + " - " + friend.St);
+	}
 }

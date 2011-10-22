@@ -7,6 +7,7 @@ var heartbeatTimer;
 var heartbeatInterval = 1500;
 
 var userData;
+var friends;
 var status = 0;
 
 function DisplayPage() {

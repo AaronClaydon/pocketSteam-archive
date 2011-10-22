@@ -104,7 +104,6 @@ namespace SMCS
                             StID = stateID
                         };
 
-                        //friends.Add(friendID.ToString(), messageObject);
                         friends.Add(messageObject);
                     }
 
@@ -137,19 +136,50 @@ namespace SMCS
                 {
                     try
                     {
+                        //Update the session with the status! (is this really needed anymore?)
                         MySqlCommand command = new MySqlCommand();
                         command.CommandText = "UPDATE sessions SET Status=@Status WHERE SessionToken=@SessionToken";
                         command.Parameters.AddWithValue("@Status", 2);
                         command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
                         Database.Command(command);
-
                         command.Dispose();
+
+                        //Lets update the users section
+                        command = new MySqlCommand();
+                        command.CommandText = "SELECT COUNT(*) FROM users WHERE Username=@Username";
+                        command.Parameters.AddWithValue("@Username", Program.userName);
+                        Int64 rows = Database.CountCommand(command);
+                        command.Dispose();
+
+                        if (rows == 0)
+                        {
+                            //New user - lets add 'em
+                            double currentTime = Database.UnixTime();
+                            int hasSteamGuard = Program.steamGuardKey != "" && Program.steamGuardKey != null ? 1:0; //AMAZING SHORTHAND
+
+                            command = new MySqlCommand();
+                            command.CommandText = "INSERT INTO users (Username, SteamID, SteamGuard, TimesLogin, LastLogin, FirstLogin) VALUES (@Username, @SteamID, @SteamGuard, @TimesLogin, @LastLogin, @FirstLogin);";
+                            command.Parameters.AddWithValue("@Username", Program.userName);
+                            command.Parameters.AddWithValue("@SteamID", Steam3.SteamUser.GetSteamID().ToString());
+                            command.Parameters.AddWithValue("@SteamGuard", hasSteamGuard);
+                            command.Parameters.AddWithValue("@TimesLogin", 1);
+                            command.Parameters.AddWithValue("@LastLogin", currentTime);
+                            command.Parameters.AddWithValue("@FirstLogin", currentTime);
+
+                            Database.Command(command);
+                            command.Dispose();
+                        }
+                        else
+                        {
+                            Program.Shutdown("USER ALREADY EXISTS!!!!!! OMG ZOMG LOL!");
+                        }
 
                         Program.steamConnectionReply = "Success";
                     }
-                    catch 
+                    catch (Exception ex)
                     {
-                        Program.Shutdown("Can not update DB session");
+                        //Program.Shutdown("Can not update DB session");
+                        Program.Shutdown(ex.Message);
                     }
                 }
                 else if (logOnResp.Result == EResult.InvalidPassword)

@@ -65,19 +65,6 @@ namespace SMCS
             }
             else
                 return;
-            /*
-            try
-            {
-                int amtSessions = db.Sessions.Where(d => d.SessionToken == sessionToken).Count();
-                if (amtSessions != 1)
-                    steamConnectionReply = "NO_SUCH_SESSION";
-            }
-            catch
-            {
-                steamConnectionReply = "DB_ERROR";
-                Program.ShutDown("Startup session check DB error");
-            }
-             */
         }
 
         static void StartServer()

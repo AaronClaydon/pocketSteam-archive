@@ -28,6 +28,20 @@ namespace SMCS
             Command.Dispose();
         }
 
+        public static Int64 CountCommand(MySqlCommand Command)
+        {
+            MySqlConnection dbcon = new MySqlConnection(connectionString);
+            dbcon.Open();
+            Command.Connection = dbcon;
+            Int64 rows = (Int64)Command.ExecuteScalar();
+
+            dbcon.Close();
+            dbcon.Dispose();
+            Command.Dispose();
+
+            return rows;
+        }
+
         public static void AddMessage(int Type, string MessageJson)
         {
             MySqlCommand command = new MySqlCommand();

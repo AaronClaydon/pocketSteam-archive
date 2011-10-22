@@ -37,7 +37,18 @@ class Main extends CI_Controller {
 
 	public function index()
 	{
-		$this->BasicView('login');
+		$this->load->model('configModel');
+		$globalConfig = $this->configModel->getConfig();
+
+		if($globalConfig['Login-Enabled'] == "True") {
+			$this->BasicView('login');
+		} else {
+			$template = array(
+					'title' => 'Offline',
+					'message' => $globalConfig['Offline-Message']
+				);
+			$this->ParseView('base', $template);
+		}
 	}
 
 	public function logout($reply = "no")
@@ -85,6 +96,13 @@ class Main extends CI_Controller {
 	}
 
 	public function login() {
+		$this->load->model('configModel');
+		$globalConfig = $this->configModel->getConfig();
+
+		if($globalConfig['Login-Enabled'] != "True") {
+			die('Disabled');
+		}
+
 		$userName = @$_POST['userName'] or die('MissingField');
 		$passWord = @$_POST['passWord'] or die('MissingField');
 
@@ -105,8 +123,6 @@ class Main extends CI_Controller {
 		$input .= $steamGuardKey . "";
 
 		//Get the CSMCS port from global
-		$this->load->model('configModel');
-		$globalConfig = $this->configModel->getConfig();
 		$csmcsPort = $globalConfig['CSMCS-Port'];
 
 		$this->load->model('tcpModel');
@@ -178,7 +194,7 @@ class Main extends CI_Controller {
 			$this->session->set_userdata('ps_passKey', '');
 			
 			$template = array(
-			            'title' => 'No such session',
+			            'title' => 'Session Expired',
 			            'message' => 'The session you are trying to access has expired, please log back into pocketSteam.'
 			            );
 			$this->ParseView('base', $template);
