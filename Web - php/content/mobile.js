@@ -76,7 +76,6 @@ function ParseData(data) {
 
 	var json = jQuery.parseJSON(data);
 	
-
 	for (message in json.M) {
     	var msgType = json.M[message].T;
     	var msg = jQuery.parseJSON(json.M[message].M);
@@ -102,9 +101,70 @@ function UpdateInfo() {
 }
 
 function UpdateFriends() {
+	if ($("div[data-url='Friends']").length > 0) {
+		var friendsHTML = FormatFriends();
+		$("div[data-url='Friends'] .displayContent").html(friendsHTML);
+	}
+}
+
+function FormatFriends() {
+	var friendsList = '';
+	
 	for (friendID in friends) {
 		var friend = friends[friendID];
 
-		//alert(friend.N + " - " + friend.St);
+		var avatarState = "offline";
+		if (friend['StID'] == 1) {
+            avatarState = "ingame";
+	    } else if (friend['StID'] == 2 ||friend['StID'] == 3 || friend['StID'] == 4 || friend['StID'] == 5) {
+			avatarState = "online";
+        }
+
+		friendsList = friendsList + '<div class="friend" onclick="StatePage();"><img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span></div>';
+	}
+
+	return friendsList;
+}
+
+function FriendsPage() {
+	var html = '' + FormatFriends();
+
+	ChangePage('Friends', html);
+}
+
+function StatePage() {
+	var html = 'Current state: <b id="stateName">' + userData['St'] + '</b><div data-role="controlgroup"><a href="javascript: ChangeState(1);" data-role="button">Online</a><a href="javascript: ChangeState(3);" data-role="button">Away</a><a href="javascript: ChangeState(2);" data-role="button">Busy</a><a href="javascript: ChangeState(4);" data-role="button">Snooze</a><a href="javascript: ChangeState(0);" data-role="button">Offline</a></div>';
+	ChangePage('Change State', html);
+}
+
+function LogoutPage() {
+	var html = 'Are you sure you want to logout? <a href="javascript: Logout();" data-role="button">Yes</a><a href="index.html" data-role="button" data-rel="back">No</a>';
+	ChangePage('Logout', html, 'd');
+}
+
+function ChangeState(state) {
+    SendCommand(4, state);
+    var stateName = "Online";
+
+    if(state == 0) {
+    	stateName = "Offline";
+    } else if(state == 2) {
+    	stateName = "Busy";
+    } else if(state == 3) {
+    	stateName = "Away";
+    } else if(state == 4) {
+    	stateName = "Snooze";
+    }
+    $("#stateName").text(stateName);
+}
+
+function ChangePage(title, html, theme) {
+	theme = theme || "a";
+	if ($("div[data-url='" + title + "']").length > 0){
+		$.mobile.changePage( "#" + title );
+	} else {
+		var newPage = $('<div data-role="page" data-url="' + title + '"><div data-role="header" data-theme="' + theme + '"><a href="#" data-rel="back" data-role="button">Info</a><h1>' + title + '</h1></div><div data-role="content"><div class="displayContent">' + html + '</div></div></div>');
+		newPage.appendTo( $.mobile.pageContainer );
+		$.mobile.changePage( newPage );
 	}
 }

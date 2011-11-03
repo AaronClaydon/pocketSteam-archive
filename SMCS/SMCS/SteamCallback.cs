@@ -38,10 +38,14 @@ namespace SMCS
                     else
                         playerState = Steam3.SteamFriends.GetPersonaState().ToString();
 
+                    string steamName = Steam3.SteamFriends.GetPersonaName();
+                    if (steamName.Length > 22)
+                        steamName = steamName.Substring(0, 22);
+
                     SteamUserData messageObject = new SteamUserData
                     {
                         SID = Steam3.SteamUser.GetSteamID().ToString(),
-                        N = Steam3.SteamFriends.GetPersonaName(),
+                        N = steamName,
                         A = avatarUrl,
                         St = playerState
                     };
@@ -95,10 +99,14 @@ namespace SMCS
                         else
                             playerState = Steam3.SteamFriends.GetFriendPersonaState(friendID).ToString();
 
+                        string steamName = Steam3.SteamFriends.GetFriendPersonaName(friendID);
+                        if (steamName.Length > 22)
+                            steamName = steamName.Substring(0, 22);
+
                         SteamUserData messageObject = new SteamUserData
                         {
                             SID = friendID.ToString(),
-                            N = Steam3.SteamFriends.GetFriendPersonaName(friendID),
+                            N = steamName,
                             A = avatarUrl,
                             St = playerState,
                             StID = stateID
@@ -171,15 +179,23 @@ namespace SMCS
                         }
                         else
                         {
-                            Program.Shutdown("USER ALREADY EXISTS!!!!!! OMG ZOMG LOL!");
+                            //Update user
+                            double currentTime = Database.UnixTime();
+
+                            command = new MySqlCommand();
+                            command.CommandText = "UPDATE users SET TimesLogin=TimesLogin+1, LastLogin=@LastLogin WHERE Username=@Username";
+                            command.Parameters.AddWithValue("@Username", Program.userName);
+                            command.Parameters.AddWithValue("@LastLogin", currentTime);
+
+                            Database.Command(command);
+                            command.Dispose();
                         }
 
                         Program.steamConnectionReply = "Success";
                     }
                     catch (Exception ex)
                     {
-                        //Program.Shutdown("Can not update DB session");
-                        Program.Shutdown(ex.Message);
+                        Program.Shutdown("Can not update DB session");
                     }
                 }
                 else if (logOnResp.Result == EResult.InvalidPassword)

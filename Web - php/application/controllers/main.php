@@ -51,7 +51,7 @@ class Main extends CI_Controller {
 		}
 	}
 
-	public function logout($reply = "no")
+	public function logout()
 	{
 		$this->load->model('databaseModel');
 		$sessionData = $this->databaseModel->getSession($this->session->userdata('ps_sessionToken'), $this->session->userdata('ps_passKey'));
@@ -66,22 +66,18 @@ class Main extends CI_Controller {
 				die();
 			}
 
-			if($reply == "yes") {
-				$this->load->model('tcpModel');
-				$this->session->set_userdata('ps_sessionToken', '');
-				$this->session->set_userdata('ps_passKey', '');
+			$this->load->model('tcpModel');
+			$this->session->set_userdata('ps_sessionToken', '');
+			$this->session->set_userdata('ps_passKey', '');
 
-				$message = '{"Type":1,"CommandValue":""}';
-				echo $this->tcpModel->sendServer($sessionData->SMCSPort, $message);
+			$message = '{"Type":1,"CommandValue":""}';
+			echo $this->tcpModel->sendServer($sessionData->SMCSPort, $message);
 
-				$template = array(
-				            'title' => 'Logged out',
-				            'message' => 'You have successfuly been logged out of the Steam network.'
-				            );
-				$this->ParseView('base', $template);
-			}else {
-				$this->BasicView('logout');
-			}
+			$template = array(
+			            'title' => 'Logged out',
+			            'message' => 'You have successfuly been logged out of the Steam network.'
+			            );
+			$this->ParseView('base', $template);	
 		}
 		else {
 			$this->session->set_userdata('ps_sessionToken', '');
@@ -179,15 +175,7 @@ class Main extends CI_Controller {
 				die();
 			}
 
-			//echo "SessionToken: " . $this->session->userdata('ps_sessionToken') . "<br />";
-			//echo "PassKey: " . $this->session->userdata('ps_passKey') . "<br />";
-
 			$this->parseView('display', array('username' => 'DERP A USERNAME'));
-
-			// $this->load->model('tcpModel');
-			// $value = '{\"To\":\"STEAM_0:1:20189445\",\"Message\":\"Hi\"}';
-			// $message = '{"Type":2,"CommandValue":"' . $value . '"}';
-			// echo $this->tcpModel->sendServer($sessionData->SMCSPort, $message);
 		}
 		else {
 			$this->session->set_userdata('ps_sessionToken', '');
@@ -244,6 +232,37 @@ class Main extends CI_Controller {
 			$json = json_encode($data);
 
 			echo $json;
+		}
+		else {
+			$this->session->set_userdata('ps_sessionToken', '');
+			$this->session->set_userdata('ps_passKey', '');
+			
+			echo 'Expired';
+		}
+	}
+
+	public function sendMessage() {
+		$sessionToken = $this->session->userdata('ps_sessionToken');
+		$this->load->model('databaseModel');
+		$sessionData = $this->databaseModel->getSession($sessionToken, $this->session->userdata('ps_passKey'));
+
+		if(isset($sessionData->SMCSPort)) {
+			if($sessionData->PassKey != $this->session->userdata('ps_passKey')) {
+				$this->session->set_userdata('ps_sessionToken', '');
+				$this->session->set_userdata('ps_passKey', '');
+				
+				echo 'Expired';
+
+				die();
+			}
+			
+			$this->load->model('tcpModel');
+			$value = '{\"To\":\"STEAM_0:1:20189445\",\"Message\":\"Hi\"}';
+			$message = '{"Type":' . $_POST['type'] . ',"CommandValue":"' . addslashes($_POST['message']) . '"}';
+			
+			$this->tcpModel->sendServer($sessionData->SMCSPort, $message);
+
+			echo 'OK';
 		}
 		else {
 			$this->session->set_userdata('ps_sessionToken', '');

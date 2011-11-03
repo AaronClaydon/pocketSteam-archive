@@ -16,19 +16,20 @@ namespace Central_SMCS
     {
         static TcpListener server;
         static bool serverOnline = true;
-        static Thread connectionThread = null;
+        static Thread connectionThread;
         static byte byteNumber = 0;
+
+        static DateTime CSMCSStarted = DateTime.Now;
+        static int SMCSStarted = 0;
 
         static void Main(string[] args)
         {
+            ChangeTitle();
             Program program = new Program();
 
-            Console.Write("Starting connection thread...");
             connectionThread = new Thread(new ThreadStart(program.StartServer));
             connectionThread.Name = "Connection thread";
             connectionThread.Start();
-            Console.WriteLine("Done");
-
 
             while (serverOnline)
             {
@@ -41,6 +42,11 @@ namespace Central_SMCS
             }
         }
 
+        static void ChangeTitle()
+        {
+            Console.Title = String.Format("Central pocketSteam Server - Started: {0}, served {1} clients", CSMCSStarted, SMCSStarted);
+        }
+
         static void StopServer()
         {
             connectionThread.Abort();
@@ -50,7 +56,6 @@ namespace Central_SMCS
 
         void StartServer()
         {
-            Console.Write("Starting socket...");
             try
             {
                 server = new TcpListener(IPAddress.Any, Int32.Parse(GlobalConfig.Get()["CSMCS-Port"]));
@@ -58,11 +63,10 @@ namespace Central_SMCS
             }
             catch
             {
-                Console.WriteLine("FAILED");
+                Console.WriteLine("CSMCS SOCKET INITIATE FAILED");
                 StopServer();
                 return;
             }
-            Console.WriteLine("Done");
 
             while (serverOnline)
             {
@@ -141,6 +145,8 @@ namespace Central_SMCS
                 client.Close();
 
                 Console.WriteLine(DateTime.Now + " | Started: " + userName);
+                SMCSStarted++;
+                ChangeTitle();
             } catch(Exception ex) {
                 Console.WriteLine("Could not start SMCS - " + ex.Message);
             }

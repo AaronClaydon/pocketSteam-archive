@@ -5,7 +5,7 @@
     </script>
 
     <div data-role="header">
-        <a href="<?= site_url('main/logout') ?>" data-role="button">Friends</a>
+        <a href="javascript: FriendsPage();" data-role="button">Friends</a>
         <h1>Info</h1>
     </div>
 
@@ -15,10 +15,10 @@
             <div id="reply">Loading data....</div>
 
             <div data-role="controlgroup">
-                <a href="javascript: alert('Not implemented');" data-role="button">Change state</a>
+                <a href="javascript: StatePage();" data-role="button">Change state</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">View community profile</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">Settings</a>
-                <a href="<?= site_url('main/logout') ?>" data-role="button">Logout</a>
+                <a href="javascript: LogoutPage();" data-role="button">Logout</a>
             </div>
         </div>
     </div>

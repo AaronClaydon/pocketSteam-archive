@@ -137,31 +137,53 @@ namespace SMCS
                     friends.Add(friend.ToString(), friend);
                 }
 
-                //Actually handle the command
-                Command command = JsonConvert.DeserializeObject<Command>(receivedData.ToString());
+                Command command;
+                try
+                {
+                    //Actually handle the command
+                    command = JsonConvert.DeserializeObject<Command>(receivedData.ToString());
+                }
+                catch
+                {
+                    Console.WriteLine("JSON Parse Exception");
+                    return;
+                }
                 if (command.Type == 1)
                 {
                     Program.Shutdown("Logout request");
                 }
-                else if (command.Type == 2)
+                else if (command.Type == 2 || command.Type == 3)
                 {
-                    FriendMessageSend friendMessage = JsonConvert.DeserializeObject<FriendMessageSend>(command.CommandValue);
+                    FriendMessageSend friendMessage;
+                    try
+                    {
+                        friendMessage = JsonConvert.DeserializeObject<FriendMessageSend>(command.CommandValue);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("JSON Parse Exception");
+                        return;
+                    }
+
+                    EChatEntryType messageType = EChatEntryType.ChatMsg;
+                    if (command.Type == 3)
+                        messageType = EChatEntryType.Emote; //Both use the same code except this enum
+
                     friendMessage.Message = System.Text.RegularExpressions.Regex.Replace(friendMessage.Message, "&lt;", "<");
                     try
                     {
-                        Steam3.SteamFriends.SendChatMessage(friends[friendMessage.To], EChatEntryType.ChatMsg, friendMessage.Message);
+                        Steam3.SteamFriends.SendChatMessage(friends[friendMessage.To], messageType, friendMessage.Message);
                     }
                     catch { }
                 }
-                else if (command.Type == 3)
+                else if (command.Type == 4)
                 {
-                    FriendMessageSend friendMessage = JsonConvert.DeserializeObject<FriendMessageSend>(command.CommandValue);
-                    friendMessage.Message = System.Text.RegularExpressions.Regex.Replace(friendMessage.Message, "&lt;", "<");
-                    try
+                    int newStateInt = Int32.Parse(command.CommandValue); //Convert string value to int
+                    if (newStateInt >= 0 && newStateInt <= 4) //check if its a vlaue usable for a state
                     {
-                        Steam3.SteamFriends.SendChatMessage(friends[friendMessage.To], EChatEntryType.Emote, friendMessage.Message);
+                        EPersonaState newState = (EPersonaState)newStateInt;
+                        Steam3.SteamFriends.SetPersonaState(newState);
                     }
-                    catch { }
                 }
             }
             else
