@@ -101,13 +101,12 @@ class Main extends CI_Controller {
 
 		$userName = @$_POST['userName'] or die('MissingField');
 		$passWord = @$_POST['passWord'] or die('MissingField');
+		$platform = @$_POST['platform'] or die('MissingField');
 
 		$steamGuardKey = "";
 		if(isset($_POST['steamGuardKey'])) {
 			$steamGuardKey = $_POST['steamGuardKey'];
 		}
-		//$userName = "azzytest"; //Lets use these values for the moment
-		//$passWord = "testing123";
 
 		$sessionToken = uniqid();
 		$passKey = uniqid();
@@ -116,6 +115,7 @@ class Main extends CI_Controller {
 		$input = $sessionToken . "\n";
 		$input .= $userName . "\n";
 		$input .= $passWord . "\n";
+		$input .= $platform . "\n";
 		$input .= $steamGuardKey . "";
 
 		//Get the CSMCS port from global
@@ -132,17 +132,24 @@ class Main extends CI_Controller {
 			echo 'pocketSteamOffline';
 			return; //Stop it from continuing with the script if inproper reply
 		}
- 
+ 		$time = time();
  		//Add session to database
 		$this->load->model('databaseModel');
 		$this->databaseModel->addSession(array(
 			$sessionToken,
 			$_SERVER['REMOTE_ADDR'],
-			time(),
-			time(),
+			$time,
+			$time,
 			$passKey,
 			1,
 			$smcsPort));
+
+		//Add this user to the logs
+		$this->databaseModel->addLog(array(
+			$userName,
+			$platform,
+			$time
+			));
 
 		//Now lets verify the login with SMCS
 		$SMCSoutput = $this->tcpModel->sendServer($smcsPort, "RepeatSteamReply");

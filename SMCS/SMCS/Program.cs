@@ -49,10 +49,14 @@ namespace SMCS
                         sessionToken = args[i + 1];
                         break;
                     case "-port":
-                        communicator.portNumber = Int32.Parse(args[i + 1]);
+                        communicator.portNumber = Int32.Parse(args[i + 1]); //Platform should always be sent first by CSMCS anyway so this won't error! (hopefully)
                         break;
                     case "-platform":
                         platform = args[i + 1];
+                        if (platform == "Web")
+                            communicator = new WebCommunicator();
+                        else
+                            communicator = new SocketCommunicator(); //If its not web then lets just make it a socket one, what else could it be anyway?
                         break;
                 }
                 i++;
@@ -60,11 +64,6 @@ namespace SMCS
 
             if (userName != string.Empty && passWord != string.Empty)
             {
-                if (platform == "Web")
-                    communicator = new WebCommunicator();
-                else
-                    communicator = new SocketCommunicator(); //If its not web then lets just make it a socket one, what else could it be anyway?
-
                 Thread serverThread = new Thread(new ThreadStart(delegate()
                 {
                     communicator.Initiate();

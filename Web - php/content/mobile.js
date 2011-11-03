@@ -7,7 +7,7 @@ function LoginPage() {
 			$("#loginMessage").addClass("loginNotice");
 			$("#loginMessage").text('Logging in to your Steam account...');
 
-			dataString = 'userName=' + $("#userName").val() + "&passWord=" + $("#passWord").val() + "&steamGuardKey=" + $("#steamGuardKey").val();
+			dataString = 'platform=Web&userName=' + $("#userName").val() + "&passWord=" + $("#passWord").val() + "&steamGuardKey=" + $("#steamGuardKey").val();
 
 			$.ajax({
                 type: "POST",

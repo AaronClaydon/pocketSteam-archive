@@ -22,6 +22,12 @@ class databaseModel extends CI_Model {
 		$query = $this->db->query($sql, $data);
 	}
 
+	function addLog($data) {
+		$sql = "INSERT INTO logs (Username, Platform, TimeStarted) 
+		VALUES (?, ?, ?);";
+		$query = $this->db->query($sql, $data);
+	}
+
 	function getSession($sessionToken, $passKey) {
 		$this->db->select('SessionToken,IPAddress,DateCreated,LastHeartbeat,PassKey,Status,SMCSPort');
 		$this->db->from('sessions');

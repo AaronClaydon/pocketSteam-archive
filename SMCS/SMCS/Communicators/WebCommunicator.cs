@@ -15,6 +15,7 @@ namespace SMCS
 
         public override void Initiate()
         {
+            Console.WriteLine("Web communicator");
             Console.Write("Starting socket...");
             try
             {
