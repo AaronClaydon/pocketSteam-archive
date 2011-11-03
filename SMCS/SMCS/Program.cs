@@ -22,11 +22,11 @@ namespace SMCS
         public static string passWord { get; set; }
         public static string steamGuardKey { get; set; }
         public static string sessionToken { get; set; }
-        public static int portNumber { get; set; }
+        public static string platform { get; set; }
 
-        public static TcpListener server { get; set; }
-        public static bool firstConnection = true;
         public static string steamConnectionReply = "";
+
+        public static CommonCommunicator communicator;
        
         [STAThread]
         static void Main(string[] args)
@@ -49,156 +49,32 @@ namespace SMCS
                         sessionToken = args[i + 1];
                         break;
                     case "-port":
-                        portNumber = Int32.Parse(args[i + 1]);
+                        communicator.portNumber = Int32.Parse(args[i + 1]);
+                        break;
+                    case "-platform":
+                        platform = args[i + 1];
                         break;
                 }
                 i++;
             }
 
-
             if (userName != string.Empty && passWord != string.Empty)
             {
-                Thread serverThread = new Thread(new ThreadStart(StartServer));
+                if (platform == "Web")
+                    communicator = new WebCommunicator();
+                else
+                    communicator = new SocketCommunicator(); //If its not web then lets just make it a socket one, what else could it be anyway?
+
+                Thread serverThread = new Thread(new ThreadStart(delegate()
+                {
+                    communicator.Initiate();
+                }));
                 serverThread.Start();
 
                 Connect(userName, passWord, steamGuardKey);
             }
             else
                 return;
-        }
-
-        static void StartServer()
-        {
-            Console.Write("Starting socket...");
-            try
-            {
-                server = new TcpListener(IPAddress.Any, portNumber);
-                server.Start();
-            }
-            catch
-            {
-                Program.Shutdown("Server Startup Failed");
-                return;
-            }
-            Console.WriteLine("Done");
-
-            while (Update)
-            {
-                TcpClient newClient = server.AcceptTcpClient();
-
-                ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), newClient);
-            }
-        }
-
-        static void ProcessClient(object clientObject)
-        {
-            TcpClient client = (TcpClient)clientObject;
-
-            if (!firstConnection)
-            {
-                byte[] bytes = new byte[1024];
-                StringBuilder receivedData = new StringBuilder();
-
-                using (NetworkStream stream = client.GetStream())
-                {
-                    stream.ReadTimeout = 60000;
-
-                    int bytesRead = 0;
-                    try
-                    {
-                        bytesRead = stream.Read(bytes, 0, bytes.Length);
-
-                        if (bytesRead > 0)
-                        {
-                            receivedData.Append(Encoding.ASCII.GetString(bytes, 0, bytesRead));
-                            stream.ReadTimeout = 10000;
-                        }
-                    }
-                    catch { }
-                }
-
-                byte[] repeatBytes = ASCIIEncoding.ASCII.GetBytes("RepeatSteamReply");
-                if(bytes == repeatBytes) 
-                {
-                    if (steamConnectionReply != "")
-                    {
-                        byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes(steamConnectionReply);
-                        client.GetStream().Write(writeBytes, 0, writeBytes.Length);
-                        client.Close();
-                        firstConnection = false;
-                    }
-                }
- 
-                //Lets loop all friends into a dictionary for message sending
-                Dictionary<String, SteamID> friends = new Dictionary<string, SteamID>();
-                for (int i = 0; i < Steam3.SteamFriends.GetFriendCount(); i++)
-                {
-                    SteamID friend = Steam3.SteamFriends.GetFriendByIndex(i);
-                    friends.Add(friend.ToString(), friend);
-                }
-
-                Command command;
-                try
-                {
-                    //Actually handle the command
-                    command = JsonConvert.DeserializeObject<Command>(receivedData.ToString());
-                }
-                catch
-                {
-                    Console.WriteLine("JSON Parse Exception");
-                    return;
-                }
-                if (command.Type == 1)
-                {
-                    Program.Shutdown("Logout request");
-                }
-                else if (command.Type == 2 || command.Type == 3)
-                {
-                    FriendMessageSend friendMessage;
-                    try
-                    {
-                        friendMessage = JsonConvert.DeserializeObject<FriendMessageSend>(command.CommandValue);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("JSON Parse Exception");
-                        return;
-                    }
-
-                    EChatEntryType messageType = EChatEntryType.ChatMsg;
-                    if (command.Type == 3)
-                        messageType = EChatEntryType.Emote; //Both use the same code except this enum
-
-                    friendMessage.Message = System.Text.RegularExpressions.Regex.Replace(friendMessage.Message, "&lt;", "<");
-                    try
-                    {
-                        Steam3.SteamFriends.SendChatMessage(friends[friendMessage.To], messageType, friendMessage.Message);
-                    }
-                    catch { }
-                }
-                else if (command.Type == 4)
-                {
-                    int newStateInt = Int32.Parse(command.CommandValue); //Convert string value to int
-                    if (newStateInt >= 0 && newStateInt <= 4) //check if its a vlaue usable for a state
-                    {
-                        EPersonaState newState = (EPersonaState)newStateInt;
-                        Steam3.SteamFriends.SetPersonaState(newState);
-                    }
-                }
-            }
-            else
-            {
-                while(firstConnection)
-                {
-                    if (steamConnectionReply != "")
-                    {
-                        byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes(steamConnectionReply);
-                        client.GetStream().Write(writeBytes, 0, writeBytes.Length);
-                        client.Close();
-                        firstConnection = false;
-                    }
-                }
-            }
         }
 
         static void Connect(string userName, string passWord, string steamGuardKey)
@@ -235,6 +111,66 @@ namespace SMCS
 
             SteamUpdateThread = new Thread(new ThreadStart(SteamUpdate)) { Name = "Steam update" };
             SteamUpdateThread.Start();
+        }
+
+        public static void ProcessCommand(string rawCommand)
+        {
+            //Lets loop all friends into a dictionary for message sending
+            Dictionary<String, SteamID> friends = new Dictionary<string, SteamID>();
+            for (int i = 0; i < Steam3.SteamFriends.GetFriendCount(); i++)
+            {
+                SteamID friend = Steam3.SteamFriends.GetFriendByIndex(i);
+                friends.Add(friend.ToString(), friend);
+            }
+
+            Command command;
+            try
+            {
+                //Actually handle the command
+                command = JsonConvert.DeserializeObject<Command>(rawCommand);
+            }
+            catch
+            {
+                Console.WriteLine("JSON Parse Exception");
+                return;
+            }
+            if (command.Type == 1)
+            {
+                Program.Shutdown("Logout request");
+            }
+            else if (command.Type == 2 || command.Type == 3)
+            {
+                FriendMessageSend friendMessage;
+                try
+                {
+                    friendMessage = JsonConvert.DeserializeObject<FriendMessageSend>(command.CommandValue);
+                }
+                catch
+                {
+                    Console.WriteLine("JSON Parse Exception");
+                    return;
+                }
+
+                EChatEntryType messageType = EChatEntryType.ChatMsg;
+                if (command.Type == 3)
+                    messageType = EChatEntryType.Emote; //Both use the same code except this enum
+
+                friendMessage.Message = System.Text.RegularExpressions.Regex.Replace(friendMessage.Message, "&lt;", "<");
+                try
+                {
+                    Steam3.SteamFriends.SendChatMessage(friends[friendMessage.To], messageType, friendMessage.Message);
+                }
+                catch { }
+            }
+            else if (command.Type == 4)
+            {
+                int newStateInt = Int32.Parse(command.CommandValue); //Convert string value to int
+                if (newStateInt >= 0 && newStateInt <= 4) //check if its a vlaue usable for a state
+                {
+                    EPersonaState newState = (EPersonaState)newStateInt;
+                    Steam3.SteamFriends.SetPersonaState(newState);
+                }
+            }
         }
 
         public static void Shutdown(string reason)
@@ -285,9 +221,7 @@ namespace SMCS
             {
                 try
                 {
-                    Session session = Database.GetSession(Program.sessionToken);
-
-                    double timeSinceLastHeartbeat =  Database.UnixTime() - session.LastHeartbeat;
+                    double timeSinceLastHeartbeat =  communicator.GetLastHeartBeat();
                     if (timeSinceLastHeartbeat >= 30)
                     {
                         //Console.WriteLine(timeSinceLastHeartbeat + " - " + Database.UnixTime());
@@ -295,7 +229,7 @@ namespace SMCS
                         break;
                     }
 
-                    Console.Title = "SMCS / " + Program.userName + " / Last ping: " + Math.Round(timeSinceLastHeartbeat) + " / Port: " + Program.portNumber;
+                    Console.Title = "SMCS / " + Program.userName + " / Last ping: " + Math.Round(timeSinceLastHeartbeat) + " / Port: " + communicator.portNumber;
                 }
                 catch
                 {

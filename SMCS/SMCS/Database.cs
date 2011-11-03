@@ -42,19 +42,6 @@ namespace SMCS
             return rows;
         }
 
-        public static void AddMessage(int Type, string MessageJson)
-        {
-            MySqlCommand command = new MySqlCommand();
-            command.CommandText = "INSERT INTO messages (SessionToken, Type, MessageValue, DateCreated) VALUES (@SessionToken, @Type, @MessageValue, @DateCreated);";
-            command.Parameters.AddWithValue("@SessionToken", Program.sessionToken);
-            command.Parameters.AddWithValue("@Type", Type);
-            command.Parameters.AddWithValue("@MessageValue", MessageJson);
-            command.Parameters.AddWithValue("@DateCreated", Database.UnixTime());
-            Database.Command(command);
-
-            command.Dispose();
-        }
-
         public static Session GetSession(string SessionToken)
         {
             MySqlConnection dbcon = new MySqlConnection(connectionString);
@@ -79,14 +66,6 @@ namespace SMCS
             command.Dispose();
 
             return session;
-        }
-
-        public static double UnixTime()
-        {
-            DateTime epoch = new DateTime(1970, 1, 1);
-            double unixTime = (DateTime.Now - epoch).TotalSeconds + Int32.Parse(GlobalConfig.Get()["Timezone-Difference"]);
-
-            return unixTime;
         }
     }
 

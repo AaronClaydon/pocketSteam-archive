@@ -51,7 +51,7 @@ namespace SMCS
                     };
                     string messageJson = JsonConvert.SerializeObject(messageObject);
 
-                    Database.AddMessage(1, messageJson);
+                    Program.communicator.SendClientMessage(1, messageJson);
                 }
                 else
                 {
@@ -118,7 +118,7 @@ namespace SMCS
                     friends = friends.OrderBy(d => d.StID).ThenBy(d => d.N).ToList();
                     string messageJson = JsonConvert.SerializeObject(friends);
 
-                    Database.AddMessage(4, messageJson);
+                    Program.communicator.SendClientMessage(4, messageJson);
                 }
             }
 
@@ -162,7 +162,7 @@ namespace SMCS
                         if (rows == 0)
                         {
                             //New user - lets add 'em
-                            double currentTime = Database.UnixTime();
+                            double currentTime = CommonCommunicator.UnixTime();
                             int hasSteamGuard = Program.steamGuardKey != "" && Program.steamGuardKey != null ? 1:0; //AMAZING SHORTHAND
 
                             command = new MySqlCommand();
@@ -180,7 +180,7 @@ namespace SMCS
                         else
                         {
                             //Update user
-                            double currentTime = Database.UnixTime();
+                            double currentTime = CommonCommunicator.UnixTime();
 
                             command = new MySqlCommand();
                             command.CommandText = "UPDATE users SET TimesLogin=TimesLogin+1, LastLogin=@LastLogin WHERE Username=@Username";
@@ -193,7 +193,7 @@ namespace SMCS
 
                         Program.steamConnectionReply = "Success";
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         Program.Shutdown("Can not update DB session");
                     }

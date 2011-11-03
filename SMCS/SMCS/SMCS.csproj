@@ -75,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonClasses.cs" />
+    <Compile Include="Communicators\CommonCommunicator.cs" />
+    <Compile Include="Communicators\SocketCommunicator.cs" />
+    <Compile Include="Communicators\WebCommunicator.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="Program.cs" />

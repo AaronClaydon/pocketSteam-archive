@@ -55,7 +55,7 @@ namespace SMCS
                 };
                 string messageJson = JsonConvert.SerializeObject(messageObject);
 
-                Database.AddMessage(messageType, messageJson);
+                Program.communicator.SendClientMessage(messageType, messageJson);
             }
         }
     }

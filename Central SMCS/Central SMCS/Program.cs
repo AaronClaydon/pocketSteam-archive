@@ -110,15 +110,19 @@ namespace Central_SMCS
 
             string[] dataArray = Regex.Split(clientData.ToString(), "\n");
 
-            if (dataArray.Count() != 4)
+            if (dataArray.Count() != 5)
+            {
+                Console.WriteLine("Invalid data length");
                 return;
+            }
 
             try
             {
                 string sessionToken = dataArray[0];
                 string userName = dataArray[1];
                 string passWord = dataArray[2];
-                string authCode = dataArray[3];
+                string platform = dataArray[3];
+                string authCode = dataArray[4];
 
                 Process process = new Process();
                 process.StartInfo.FileName = globalConfig["SMCS-Location"];
