@@ -43,7 +43,7 @@ namespace SMCS
 
             if (!firstConnection)
             {
-                byte[] bytes = new byte[1024];
+                byte[] bytes = new byte[4096];
                 StringBuilder receivedData = new StringBuilder();
 
                 using (NetworkStream stream = client.GetStream())

@@ -128,7 +128,7 @@ namespace Central_SMCS
                 process.StartInfo.FileName = globalConfig["SMCS-Location"];
 
                 if (authCode == "")
-                    process.StartInfo.Arguments += String.Format("-platform {0} -username {1} -password {2} -sessionToken {3} -port {4}",
+                    process.StartInfo.Arguments = String.Format("-platform {0} -username {1} -password {2} -sessionToken {3} -port {4}",
                             platform,
                             userName,
                             passWord,
@@ -136,7 +136,7 @@ namespace Central_SMCS
                             portNumber
                         );
                 else
-                    process.StartInfo.Arguments += String.Format("-platform {0} -username {1} -password {2} -sessionToken {3} -authcode {4} -port {5}",
+                    process.StartInfo.Arguments = String.Format("-platform {0} -username {1} -password {2} -sessionToken {3} -authcode {4} -port {5}",
                             platform,
                             userName,
                             passWord,

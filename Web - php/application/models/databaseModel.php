@@ -17,19 +17,19 @@ class databaseModel extends CI_Model {
     }
 
 	function addSession($data) {
-		$sql = "INSERT INTO sessions (SessionToken, IPAddress, DateCreated, LastHeartbeat, PassKey, Status, SMCSPort) 
-		VALUES (?, ?, ?, ?, ?, ?, ?);";
+		$sql = "INSERT INTO sessions (SessionToken, IPAddress, DateCreated, LastHeartbeat, PassKey, Status, SMCSPort, Platform) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		$query = $this->db->query($sql, $data);
 	}
 
 	function addLog($data) {
-		$sql = "INSERT INTO logs (Username, Platform, TimeStarted) 
-		VALUES (?, ?, ?);";
+		$sql = "INSERT INTO logs (Username, Platform, ReturnMessage, Time) 
+		VALUES (?, ?, ?, ?);";
 		$query = $this->db->query($sql, $data);
 	}
 
 	function getSession($sessionToken, $passKey) {
-		$this->db->select('SessionToken,IPAddress,DateCreated,LastHeartbeat,PassKey,Status,SMCSPort');
+		$this->db->select('SessionToken,IPAddress,DateCreated,LastHeartbeat,PassKey,Status,SMCSPort,Platform');
 		$this->db->from('sessions');
 		$this->db->where('SessionToken', $sessionToken);
 		$this->db->where('PassKey', $passKey);

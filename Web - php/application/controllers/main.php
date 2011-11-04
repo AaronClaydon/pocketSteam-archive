@@ -93,6 +93,7 @@ class Main extends CI_Controller {
 
 	public function login() {
 		$this->load->model('configModel');
+		$this->load->model('databaseModel');
 		$globalConfig = $this->configModel->getConfig();
 
 		if($globalConfig['Login-Enabled'] != "True") {
@@ -102,6 +103,11 @@ class Main extends CI_Controller {
 		$userName = @$_POST['userName'] or die('MissingField');
 		$passWord = @$_POST['passWord'] or die('MissingField');
 		$platform = @$_POST['platform'] or die('MissingField');
+
+		$commPlatform = $platform;
+		if($platform == "SteamFriendsAndroid") {
+			$commPlatform = "Socket";
+		}
 
 		$steamGuardKey = "";
 		if(isset($_POST['steamGuardKey'])) {
@@ -115,7 +121,7 @@ class Main extends CI_Controller {
 		$input = $sessionToken . "\n";
 		$input .= $userName . "\n";
 		$input .= $passWord . "\n";
-		$input .= $platform . "\n";
+		$input .= $commPlatform . "\n";
 		$input .= $steamGuardKey . "";
 
 		//Get the CSMCS port from global
@@ -129,12 +135,18 @@ class Main extends CI_Controller {
 			$smcsPort = $CSMCSoutputArray[1];
 		}
 		else {
+			//Add this login attempt to the logs
+			$this->databaseModel->addLog(array(
+				$userName,
+				$platform,
+				$CSMCSoutput,
+				time()
+				));
 			echo 'pocketSteamOffline';
 			return; //Stop it from continuing with the script if inproper reply
 		}
  		$time = time();
  		//Add session to database
-		$this->load->model('databaseModel');
 		$this->databaseModel->addSession(array(
 			$sessionToken,
 			$_SERVER['REMOTE_ADDR'],
@@ -142,22 +154,27 @@ class Main extends CI_Controller {
 			$time,
 			$passKey,
 			1,
-			$smcsPort));
-
-		//Add this user to the logs
-		$this->databaseModel->addLog(array(
-			$userName,
-			$platform,
-			$time
-			));
+			$smcsPort,
+			$platform));
 
 		//Now lets verify the login with SMCS
 		$SMCSoutput = $this->tcpModel->sendServer($smcsPort, "RepeatSteamReply");
 
+		$this->databaseModel->addLog(array(
+				$userName,
+				$platform,
+				$SMCSoutput,
+				time()
+				));
+
 		if($SMCSoutput == "Success") {
-			echo 'Success:' . $sessionToken . ':' . $passKey;
-			$this->session->set_userdata('ps_sessionToken', $sessionToken);
-			$this->session->set_userdata('ps_passKey', $passKey);
+			if($commPlatform == "Web") {
+				echo 'Success:' . $sessionToken . ':' . $passKey;
+				$this->session->set_userdata('ps_sessionToken', $sessionToken);
+				$this->session->set_userdata('ps_passKey', $passKey);
+			} else if($commPlatform == "Socket") {
+				echo 'Success:' . $sessionToken . ':' . $passKey . ":" . $smcsPort;
+			}
 		}
 		else{
 			echo $SMCSoutput;

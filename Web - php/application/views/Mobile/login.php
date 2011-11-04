@@ -33,6 +33,10 @@
             </form>
         </div>
     </div>
+
+    <div data-role="footer" data-position="fixed"> 
+        <h4>&copy; <a href="http://www.azzy.co/">AzzyCo</a> &amp; Hosted by <a href="http://www.pwned.com/">Pwned.com</a></h4> 
+    </div>
 </div>
 
 </body>

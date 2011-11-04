@@ -14,11 +14,6 @@ namespace SMCS
             //Blank as it will be inherited
         }
 
-        public void RawSendMessage(string Message)
-        {
-            //Blank as it will be inherited
-        }
-
         public virtual void SendClientMessage(int Type, string MessageValue)
         {
             //Blank as it will be inherited
