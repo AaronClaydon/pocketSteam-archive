@@ -26,6 +26,7 @@ namespace SMCS
 
         public static string steamConnectionReply = "";
 
+        public static int heartbeatFailures = 0;
         public static CommonCommunicator communicator;
        
         [STAThread]
@@ -223,9 +224,13 @@ namespace SMCS
                     double timeSinceLastHeartbeat =  communicator.GetLastHeartBeat();
                     if (timeSinceLastHeartbeat >= 30)
                     {
-                        //Console.WriteLine(timeSinceLastHeartbeat + " - " + Database.UnixTime());
-                        Program.Shutdown("timeout");
-                        break;
+                        //Console.WriteLine(timeSinceLastHeartbeat + " - " + CommonCommunicator.UnixTime());
+                        heartbeatFailures++;
+                        if (heartbeatFailures >= 2)
+                        {
+                            Program.Shutdown("timeout");
+                            break;
+                        }
                     }
 
                     Console.Title = "SMCS / " + Program.userName + " / Last ping: " + Math.Round(timeSinceLastHeartbeat) + " / Port: " + communicator.portNumber;

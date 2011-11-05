@@ -133,7 +133,7 @@ namespace SMCS
 
             if (msg.IsType<SteamFriends.FriendsListCallback>())
             {
-                Steam3.SteamFriends.SetPersonaState(EPersonaState.Online);
+                Steam3.SteamFriends.SetPersonaState(EPersonaState.Online); //Necesary because steam sometimes forgets to send the login key
             }
 
             if (msg.IsType<SteamUser.LogOnCallback>())
@@ -230,6 +230,7 @@ namespace SMCS
 
             if (msg.IsType<SteamUser.LoginKeyCallback>())
             {
+                Console.WriteLine("Login key received - Setting online");
                 Steam3.SteamFriends.SetPersonaState(EPersonaState.Online);
             }
 

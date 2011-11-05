@@ -3,3 +3,6 @@ C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Soc
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\obj\x86\Debug\Socket Test.exe
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\obj\x86\Debug\Socket Test.pdb
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\bin\Debug\Newtonsoft.Json.Net35.dll
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\bin\Debug\Newtonsoft.Json.Net35.pdb
+C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\Socket Test\Socket Test\bin\Debug\Newtonsoft.Json.Net35.xml

@@ -11,6 +11,9 @@ namespace SMCS
     class SocketCommunicator : CommonCommunicator
     {
         TcpListener server;
+        NetworkStream currentClientStream;
+        int clientNumber = 0;
+        double lastHeartbeat = 0;
 
         public override void Initiate()
         {
@@ -29,8 +32,11 @@ namespace SMCS
 
         void ProcessClient(object objClient)
         {
+            Console.WriteLine("New client connected");
             TcpClient client = (TcpClient)objClient;
             NetworkStream clientStream = client.GetStream();
+            this.currentClientStream = clientStream; //Update to new client
+            this.clientNumber += 1;
 
             byte[] bytes = new byte[4096];
             int bytesRead;
@@ -57,17 +63,25 @@ namespace SMCS
                 }
 
                 string message = ASCIIEncoding.ASCII.GetString(bytes, 0, bytesRead);
-                Console.WriteLine(message);
+
                 if (message == "RepeatSteamReply")
                 {
                     while (Program.steamConnectionReply == "") { } //Block it until it has a proper value!
                     SendRawMessage(client, Program.steamConnectionReply);
                     break;
                 }
-
-                Program.ProcessCommand(message);
+                else if (message == "HEART")
+                {
+                    lastHeartbeat = CommonCommunicator.UnixTime();
+                    byte[] heartbeat = ASCIIEncoding.ASCII.GetBytes("BEAT");
+                    clientStream.Write(heartbeat, 0, heartbeat.Length);
+                    clientStream.Flush();
+                }
+                else
+                    Program.ProcessCommand(message);
             }
 
+            Console.WriteLine("Client disconnected");
             client.Close();
         }
 
@@ -75,6 +89,31 @@ namespace SMCS
         {
             byte[] sendBytes = ASCIIEncoding.ASCII.GetBytes(Message);
             Client.GetStream().Write(sendBytes, 0, sendBytes.Length);
+        }
+
+        public override void SendClientMessage(int Type, string MessageValue)
+        {
+            if (this.clientNumber >= 2)
+            {
+                SocketMessage message = new SocketMessage
+                {
+                    Type = Type,
+                    MessageValue = MessageValue
+                }; //holy confusing code batman!
+                string messageJson = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+
+                byte[] bytes = ASCIIEncoding.ASCII.GetBytes(messageJson);
+                currentClientStream.Write(bytes, 0, bytes.Length);
+                currentClientStream.Flush();
+
+                if (Type == 4)
+                    Console.WriteLine("Friends list sent");
+            }
+        }
+
+        public override double GetLastHeartBeat()
+        {
+            return CommonCommunicator.UnixTime() - lastHeartbeat;
         }
     }
 }

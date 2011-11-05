@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SMCS
+namespace Socket_Test
 {
     public class SocketMessage
     {
