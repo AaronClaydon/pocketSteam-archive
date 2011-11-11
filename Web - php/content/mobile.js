@@ -1,6 +1,8 @@
 function LoginPage() {
 	$(document).ready(function(){
-		clearInterval(heartbeatTimer); //Incase for some reason it didn't end (IT HAPPENS)
+		if(typeof(heartbeatTimer) !== 'undefined') {
+			clearInterval(heartbeatTimer); //Incase for some reason it didn't end (IT HAPPENS)
+		}
 		$("#loginButton").click(function() { 
 			DisableTextBoxes();
 			$("#loginMessage").removeClass();
@@ -36,7 +38,9 @@ function LoginPage() {
 						$("#loginMessage").text('Please enter the Steam Guard key sent to your email account');
 						$(".hidden").css('display', 'inline');
 	                } else {
-	                	alert('Unknown reply: '+ data);
+	                	$("#loginMessage").removeClass();
+	                	$("#loginMessage").addClass("loginError");
+						$("#loginMessage").text('The pocketSteam server returned an unknown reply: ' + data);
 	                }
                 },
                 error: function (data) {
@@ -84,12 +88,21 @@ function ParseData(data) {
     		userData = msg;
     		UpdateInfo();
     	} else if(msgType == 2) {
-    		alert(msg.N + ' said: ' + msg.M);
-    	} else if(msgType == 3) {
-    		//EMOTE MESSAGES!
+    		if(friendMessages[msg.SID] == undefined) {
+    			friendMessages[msg.SID] = "";
+    		}
+    		friendMessages[msg.SID] = friendMessages[msg.SID] + "<strong>" + msg.N + "</strong>: " + msg.M + "<br />";
+    		UpdateChat();
+	    } else if(msgType == 3) {
+	    	if(friendMessages[msg.SID] == undefined) {
+    			friendMessages[msg.SID] = [];
+    		}
+    		friendMessages[msg.SID] = friendMessages[msg.SID] + "<strong>" + msg.N + "</strong><i> " + msg.M + "</i><br />";
+    		UpdateChat();
     	} else if(msgType == 4) {
     		friends = msg;
     		UpdateFriends();
+    		UpdateChat();
     	} else if (msgType == 5) {
     		$("#globalMessages").append('<div class="info">' + msg.GM + '</div>');
     	}
@@ -97,7 +110,7 @@ function ParseData(data) {
 }
 
 function UpdateInfo() {
-	$("#reply").html('<div class="friend"><img src="' + userData['A'] + '" alt="Avatar" class="steam_online"> ' + userData['N'] + ' - <span>' + userData['St'] + '</span></div>');
+	$("#reply").html(FormatUserBar(userData));
 }
 
 function UpdateFriends() {
@@ -107,23 +120,46 @@ function UpdateFriends() {
 	}
 }
 
+function UpdateChat() {
+	if ($("div[data-url='Chat']").length > 0) {
+		var arrayID = '';
+		var steamID = $("div[data-url='Chat']").attr('data-steamID');
+		for (friendID in friends) {
+			var friend = friends[friendID];
+			if(friend.SID == steamID) {
+				arrayID = friendID;
+				break;
+			}
+		}
+		var friend = friends[arrayID];
+
+		var chatPage = FormatUserBar(friend) + "<hr />" + friendMessages[steamID];
+		$("div[data-url='Chat'] .displayContent").html(chatPage);
+	}
+}
+
 function FormatFriends() {
 	var friendsList = '';
 	
 	for (friendID in friends) {
 		var friend = friends[friendID];
 
-		var avatarState = "offline";
-		if (friend['StID'] == 1) {
-            avatarState = "ingame";
-	    } else if (friend['StID'] == 2 ||friend['StID'] == 3 || friend['StID'] == 4 || friend['StID'] == 5) {
-			avatarState = "online";
-        }
-
-		friendsList = friendsList + '<div class="friend" onclick="StatePage();"><img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span></div>';
+		friendsList = friendsList + FormatUserBar(friend, 'onclick="ChatPage(\'' + friend.SID + '\');"');
 	}
 
 	return friendsList;
+}
+
+function FormatUserBar(friend, onclick) {
+	var onclick = onclick || "";
+	var avatarState = "offline";
+	if (friend['StID'] == 1) {
+        avatarState = "ingame";
+	} else if (friend['StID'] == 2 ||friend['StID'] == 3 || friend['StID'] == 4 || friend['StID'] == 5) {
+		avatarState = "online";
+    }
+
+    return '<div class="friend" ' + onclick + '><img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span></div>';
 }
 
 function FriendsPage() {
@@ -148,6 +184,9 @@ function ChangeState(state) {
 
     if(state == 0) {
     	stateName = "Offline";
+    	userData['StID'] = 6;
+    	userData['St'] = 'Offline';
+    	UpdateInfo();
     } else if(state == 2) {
     	stateName = "Busy";
     } else if(state == 3) {
@@ -158,12 +197,34 @@ function ChangeState(state) {
     $("#stateName").text(stateName);
 }
 
+function ChatPage(steamID) {
+	$("div[data-url='Chat']").remove();
+	var arrayID = '';
+	for (friendID in friends) {
+		var friend = friends[friendID];
+		if(friend.SID == steamID) {
+			arrayID = friendID;
+			break;
+		}
+	}
+	var friend = friends[arrayID];
+	var chatMessages = "";
+
+	if(friendMessages[steamID] != undefined) {
+		chatMessages = friendMessages[steamID];
+	}
+
+	var chatPage = FormatUserBar(friend) + "<hr />" + chatMessages;
+	ChangePage('Chat', chatPage);
+	$("div[data-url='Chat']").attr('data-steamID', friend.SID);
+}
+
 function ChangePage(title, html, theme) {
 	theme = theme || "a";
 	if ($("div[data-url='" + title + "']").length > 0){
 		$.mobile.changePage( "#" + title );
 	} else {
-		var newPage = $('<div data-role="page" data-url="' + title + '"><div data-role="header" data-theme="' + theme + '"><a href="#" data-rel="back" data-role="button">Info</a><h1>' + title + '</h1></div><div data-role="content"><div class="displayContent">' + html + '</div></div></div>');
+		var newPage = $('<div data-role="page" data-url="' + title + '"><div data-role="header" data-theme="' + theme + '"><a href="#" data-rel="back" data-role="button">Back</a><h1>' + title + '</h1></div><div data-role="content"><div class="displayContent">' + html + '</div></div></div>');
 		newPage.appendTo( $.mobile.pageContainer );
 		$.mobile.changePage( newPage );
 	}

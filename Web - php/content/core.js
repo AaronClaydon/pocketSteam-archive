@@ -8,7 +8,8 @@ var heartbeatTimer;
 var heartbeatInterval = 1500;
 
 var userData;
-var friends;
+var friends = [];
+var friendMessages = [];
 var status = 0;
 
 function DisplayPage() {
@@ -62,4 +63,11 @@ function Redirect(redirectLocation) {
 function Logout() {
 	clearInterval(heartbeatTimer);
 	Redirect(logoutUrl);
+}
+
+function ParseFriends(msg) {
+    for (friendID in msg) {
+        var friend = msg[friendID];
+        friends[friend.SID] = friend;
+    }
 }

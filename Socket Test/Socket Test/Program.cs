@@ -53,10 +53,39 @@ namespace Socket_Test
                 while (true)
                 {
                     SendMessage("HEART");
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2500);
                 }
             }));
             heartBeatThread.Start();
+
+            while (true)
+            {
+                ConsoleKeyInfo key = Console.ReadKey();
+
+                if (key.Key == ConsoleKey.Backspace)
+                {
+                    Console.WriteLine("Spam activated");
+                    new Thread(new ThreadStart(delegate()
+                    {
+                        for (int i = 1; i <= 20; i++)
+                        {
+                            FriendMessageSend message = new FriendMessageSend
+                            {
+                                To = "STEAM_0:1:20189445",
+                                Message = "G'day fine fellow!"
+                            };
+                            Command command = new Command
+                            {
+                                Type = 2,
+                                CommandValue = JsonConvert.SerializeObject(message)
+                            };
+                            SendMessage(JsonConvert.SerializeObject(command));
+                            Thread.Sleep(15);
+                        }
+                    })).Start();
+                }
+            }
+            //Some system tests
 
             Console.ReadLine();
         }
@@ -67,7 +96,7 @@ namespace Socket_Test
             client.Connect("127.0.0.1", (int)port);
 
             clientStream = client.GetStream();
-            byte[] bytes = new byte[4096];
+            byte[] bytes = new byte[40960];
             int bytesRead;
 
             while (true)
@@ -93,11 +122,22 @@ namespace Socket_Test
 
                 string rawMessage = ASCIIEncoding.ASCII.GetString(bytes, 0, bytesRead);
 
-                SocketMessage message;
+                if (rawMessage == "BEAT")
+                {
+                    return; //So it doesn't get parsed
+                }
+
+                List<SocketMessage> messages = new List<SocketMessage>();
                 try
                 {
-                    message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage);
-
+                    messages = JsonConvert.DeserializeObject<List<SocketMessage>>(rawMessage);
+                }
+                catch
+                {
+                    Console.WriteLine("JSON PARSE ERROR");
+                }
+                foreach (SocketMessage message in messages)
+                {
                     if (message.Type == 1)
                     {
                         SteamUserData user = JsonConvert.DeserializeObject<SteamUserData>(message.MessageValue);
@@ -140,7 +180,7 @@ namespace Socket_Test
                         }
                         Console.WriteLine();
                     }
-                } catch {}
+                }
             }
 
             client.Close();
@@ -151,8 +191,15 @@ namespace Socket_Test
             if (clientStream != null)
             {
                 byte[] bytes = ASCIIEncoding.ASCII.GetBytes(Message);
-                clientStream.Write(bytes, 0, bytes.Length);
-                clientStream.Flush();
+                try
+                {
+                    clientStream.Write(bytes, 0, bytes.Length);
+                    clientStream.Flush();
+                }
+                catch 
+                {
+                    Environment.Exit(2130);
+                }
             }
         }
     }

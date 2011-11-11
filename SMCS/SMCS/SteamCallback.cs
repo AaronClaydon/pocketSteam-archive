@@ -42,12 +42,33 @@ namespace SMCS
                     if (steamName.Length > 22)
                         steamName = steamName.Substring(0, 22);
 
+                    int stateID = 99;
+                    switch (Steam3.SteamFriends.GetPersonaState())
+                    {
+                        case EPersonaState.Online:
+                            stateID = 2;
+                            break;
+                        case EPersonaState.Away:
+                            stateID = 3;
+                            break;
+                        case EPersonaState.Busy:
+                            stateID = 4;
+                            break;
+                        case EPersonaState.Snooze:
+                            stateID = 5;
+                            break;
+                        case EPersonaState.Offline:
+                            stateID = 6;
+                            break;
+                    }
+
                     SteamUserData messageObject = new SteamUserData
                     {
                         SID = Steam3.SteamUser.GetSteamID().ToString(),
                         N = steamName,
                         A = avatarUrl,
-                        St = playerState
+                        St = playerState,
+                        StID = stateID
                     };
                     string messageJson = JsonConvert.SerializeObject(messageObject);
 

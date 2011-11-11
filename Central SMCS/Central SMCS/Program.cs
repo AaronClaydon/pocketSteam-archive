@@ -150,7 +150,7 @@ namespace Central_SMCS
 
                 client.Close();
 
-                Console.WriteLine(DateTime.Now + " | Started: " + userName);
+                Console.WriteLine(DateTime.Now + " | Started: [" + platform + "] " + userName);
                 SMCSStarted++;
                 ChangeTitle();
             } catch(Exception ex) {

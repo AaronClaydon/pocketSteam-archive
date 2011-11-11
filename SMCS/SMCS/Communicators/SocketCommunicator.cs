@@ -11,9 +11,10 @@ namespace SMCS
     class SocketCommunicator : CommonCommunicator
     {
         TcpListener server;
-        NetworkStream currentClientStream;
+        static TcpClient currentClient;
         int clientNumber = 0;
         double lastHeartbeat = 0;
+        static List<SocketMessage> messages = new List<SocketMessage>();
 
         public override void Initiate()
         {
@@ -35,8 +36,14 @@ namespace SMCS
             Console.WriteLine("New client connected");
             TcpClient client = (TcpClient)objClient;
             NetworkStream clientStream = client.GetStream();
-            this.currentClientStream = clientStream; //Update to new client
+            currentClient = client; //Update to new client
             this.clientNumber += 1;
+
+            if (this.clientNumber >= 2)
+            {
+                Thread messagesStartThread = new Thread(new ParameterizedThreadStart(MessagesSend));
+                messagesStartThread.Start(this);
+            }
 
             byte[] bytes = new byte[4096];
             int bytesRead;
@@ -72,10 +79,15 @@ namespace SMCS
                 }
                 else if (message == "HEART")
                 {
+                    Console.WriteLine("HERAT");
                     lastHeartbeat = CommonCommunicator.UnixTime();
                     byte[] heartbeat = ASCIIEncoding.ASCII.GetBytes("BEAT");
-                    clientStream.Write(heartbeat, 0, heartbeat.Length);
-                    clientStream.Flush();
+                    try
+                    {
+                        clientStream.Write(heartbeat, 0, heartbeat.Length);
+                        clientStream.Flush();
+                    }
+                    catch { }
                 }
                 else
                     Program.ProcessCommand(message);
@@ -83,6 +95,40 @@ namespace SMCS
 
             Console.WriteLine("Client disconnected");
             client.Close();
+
+            if (clientNumber >= 2)
+            {
+                Program.Shutdown("ClientDisconnect");
+            }
+        }
+
+        static void MessagesSend(object objThis)
+        {
+            SocketCommunicator This = (SocketCommunicator)objThis;
+
+            while (Program.Update)
+            {
+                if (messages.Count > 0)
+                {
+                    string messageJson = Newtonsoft.Json.JsonConvert.SerializeObject(messages);
+                    messages.Clear();
+                    Console.WriteLine("Sending some messages");
+
+                    try
+                    {
+                        NetworkStream clientStream = currentClient.GetStream();
+                        byte[] bytes = ASCIIEncoding.ASCII.GetBytes(messageJson);
+                        clientStream.Write(bytes, 0, bytes.Length);
+                        clientStream.Flush();
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                Thread.Sleep(200);
+            }
         }
 
         void SendRawMessage(TcpClient Client, string Message)
@@ -93,22 +139,13 @@ namespace SMCS
 
         public override void SendClientMessage(int Type, string MessageValue)
         {
-            if (this.clientNumber >= 2)
+            SocketMessage message = new SocketMessage
             {
-                SocketMessage message = new SocketMessage
-                {
-                    Type = Type,
-                    MessageValue = MessageValue
-                }; //holy confusing code batman!
-                string messageJson = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+                Type = Type,
+                MessageValue = MessageValue
+            }; //holy confusing code batman!
 
-                byte[] bytes = ASCIIEncoding.ASCII.GetBytes(messageJson);
-                currentClientStream.Write(bytes, 0, bytes.Length);
-                currentClientStream.Flush();
-
-                if (Type == 4)
-                    Console.WriteLine("Friends list sent");
-            }
+            messages.Add(message);
         }
 
         public override double GetLastHeartBeat()
