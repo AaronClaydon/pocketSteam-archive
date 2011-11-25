@@ -235,7 +235,7 @@ namespace SMCS
 
                     Console.Title = "SMCS / " + Program.userName + " / Last ping: " + Math.Round(timeSinceLastHeartbeat) + " / Port: " + communicator.portNumber;
                 }
-                catch
+                catch (Exception ex)
                 {
                     Program.Shutdown("Timeout check error");
                 }

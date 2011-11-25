@@ -14,19 +14,16 @@ namespace SMCS
             Dictionary<String, String> config = new Dictionary<string, string>();
 
             string globalConfigLocation = (string)System.Configuration.ConfigurationManager.AppSettings["GlobalConfigLocation"];
-            TextReader reader = new StreamReader(globalConfigLocation);
+            StreamReader reader = new StreamReader(globalConfigLocation);
 
-            string rawConfig = reader.ReadToEnd();
-            reader.Close();
-            reader.Dispose();
-            string[] lines = Regex.Split(rawConfig, "\r\n");
-
-            foreach (string line in lines)
+            while (!reader.EndOfStream)
             {
-                string[] data = Regex.Split(line, ": ");
+                string[] data = Regex.Split(reader.ReadLine(), ": ");
 
                 config.Add(data[0], data[1]);
             }
+            reader.Close();
+            reader.Dispose();
 
             return config;
         }

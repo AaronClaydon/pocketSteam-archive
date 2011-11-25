@@ -11,3 +11,14 @@ C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\D
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.pdb
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.xml
 C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\mysql.data.dll
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe.config
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\obj\x86\Debug\SMCS.exe
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\obj\x86\Debug\SMCS.pdb
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.pdb
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SteamKit2.dll
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\protobuf-net.dll
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Classless.Hasher.dll
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.pdb
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\Newtonsoft.Json.Net35.xml
+D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\obj\x86\Debug\ResolveAssemblyReference.cache
