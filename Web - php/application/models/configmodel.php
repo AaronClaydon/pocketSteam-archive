@@ -4,9 +4,10 @@ class configModel extends CI_Model {
 		$this->load->helper('file');
 
 		$configLocation = $this->config->item('globalConfigLocation');
+		$configSplit = $this->config->item('globalConfigSplit');
 		$rawConfigString = read_file($configLocation);
 
-		$lineArray = explode("\r\n", $rawConfigString);
+		$lineArray = explode($configSplit, $rawConfigString);
 		$config = array();
 
 		foreach($lineArray as $line) {

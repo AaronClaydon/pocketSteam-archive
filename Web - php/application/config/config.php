@@ -17,7 +17,8 @@
 $config['base_url']	= '';
 
 //Have some LOVELY pocketSteam config here!!!!!
-$config['globalConfigLocation'] = 'C:\wamp\www\pocketsteam\GlobalConfig.txt';
+$config['globalConfigLocation'] = 'D:\wamp\www\pocketsteam\GlobalConfig.txt';#
+$config['globalConfigSplit'] = "\r\n";
 
 /*
 |--------------------------------------------------------------------------

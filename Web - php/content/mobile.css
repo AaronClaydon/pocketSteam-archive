@@ -82,3 +82,8 @@
 	color: #D8000C;
 	background-color: #FFBABA;
 }
+
+.chatForm {
+	position:absolute;
+	bottom: 10px;
+}

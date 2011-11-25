@@ -2,7 +2,7 @@ DB-Host: localhost
 DB-Username: pocketSteam
 DB-Password: 82ZczSpM2NvRzXJd
 DB-Database: pocketSteam
-SMCS-Location: C:\Users\Azzy\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe
+SMCS-Location: D:\Documents\Documents\Visual Studio 2010\Projects\Steam mobile\SMCS\SMCS\bin\Debug\SMCS.exe
 Login-Enabled: True
 Offline-Message: The pocketSteam network is currently <strong>offline</strong> while it is being updated and will return shortly.
 ##Max-Users: 200

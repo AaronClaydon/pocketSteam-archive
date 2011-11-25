@@ -133,7 +133,7 @@ function UpdateChat() {
 		}
 		var friend = friends[arrayID];
 
-		var chatPage = FormatUserBar(friend) + "<hr />" + friendMessages[steamID];
+		var chatPage = FormatUserBar(friend) + "<hr />" + friendMessages[steamID] + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="button" data-theme="b">Send</button></form>';
 		$("div[data-url='Chat'] .displayContent").html(chatPage);
 	}
 }
@@ -214,7 +214,7 @@ function ChatPage(steamID) {
 		chatMessages = friendMessages[steamID];
 	}
 
-	var chatPage = FormatUserBar(friend) + "<hr />" + chatMessages;
+	var chatPage = FormatUserBar(friend) + "<hr />" + chatMessages + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="button" data-theme="b">Send</button></form>';
 	ChangePage('Chat', chatPage);
 	$("div[data-url='Chat']").attr('data-steamID', friend.SID);
 }
