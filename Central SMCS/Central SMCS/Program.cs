@@ -61,9 +61,9 @@ namespace Central_SMCS
                 server = new TcpListener(IPAddress.Any, Int32.Parse(GlobalConfig.Get()["CSMCS-Port"]));
                 server.Start();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("CSMCS SOCKET INITIATE FAILED");
+                Console.WriteLine("CSMCS SOCKET INITIATE FAILED: " + ex.Message);
                 StopServer();
                 return;
             }
