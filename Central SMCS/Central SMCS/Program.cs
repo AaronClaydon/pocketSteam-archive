@@ -21,6 +21,7 @@ namespace Central_SMCS
 
         static DateTime CSMCSStarted = DateTime.Now;
         static int SMCSStarted = 0;
+        static Dictionary<String, String> globalConfig = GlobalConfig.Get();
 
         static void Main(string[] args)
         {
@@ -78,7 +79,6 @@ namespace Central_SMCS
 
         void ProcessClient(object clientObject)
         {
-            Dictionary<String, String> globalConfig = GlobalConfig.Get();
             TcpClient client = (TcpClient)clientObject;
 
             byte[] bytes = new byte[1024];
@@ -87,7 +87,7 @@ namespace Central_SMCS
             byteNumber += 1;
             int portNumber = Int32.Parse(byteNumber.ToString(globalConfig["SMCS-Base-Port"]));
 
-            byte[] writeBytes = ASCIIEncoding.ASCII.GetBytes("Port\n" + portNumber);
+            byte[] writeBytes = Encoding.ASCII.GetBytes("Port\n" + portNumber);
             client.GetStream().Write(writeBytes, 0, writeBytes.Length);
 
             using (NetworkStream stream = client.GetStream())

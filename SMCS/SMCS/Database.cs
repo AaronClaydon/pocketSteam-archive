@@ -9,12 +9,7 @@ namespace SMCS
 {
     class Database
     {
-        static string connectionString =
-             "Server=localhost;" +
-             "Database=pocketsteam;" +
-             "User ID=pocketsteam;" +
-             "Password=82ZczSpM2NvRzXJd;" +
-             "Pooling=false";
+        public static string connectionString;
 
         public static void Command(MySqlCommand Command)
         {

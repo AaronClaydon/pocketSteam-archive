@@ -18,6 +18,8 @@ namespace SMCS
 
         public override void Initiate()
         {
+            base.Initiate();
+
             Console.WriteLine("Socket communicator");
             server = new TcpListener(IPAddress.Any, portNumber);
             server.Start();

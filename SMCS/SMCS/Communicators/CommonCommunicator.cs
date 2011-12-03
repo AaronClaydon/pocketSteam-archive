@@ -11,6 +11,13 @@ namespace SMCS
 
         public virtual void Initiate() 
         {
+            Dictionary<String, String> config = GlobalConfig.Get();
+            Database.connectionString = 
+                "Server=" + config["DB-Host"] + ";" +
+                "Database=" + config["DB-Database"] + ";" +
+                "User ID=" + config["DB-Username"] + ";" +
+                "Password=" + config["DB-Password"] + ";" +
+                "Pooling=false";
             //Blank as it will be inherited
         }
 

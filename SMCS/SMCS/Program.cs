@@ -237,7 +237,7 @@ namespace SMCS
                 }
                 catch (Exception ex)
                 {
-                    Program.Shutdown("Timeout check error");
+                    Program.Shutdown("Timeout check error: " + ex.Message);
                 }
 
                 Thread.Sleep(10000);
