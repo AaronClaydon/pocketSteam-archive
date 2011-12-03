@@ -87,3 +87,7 @@
 	position:absolute;
 	bottom: 10px;
 }
+
+.chatMessages {
+	word-wrap: break-word;
+}

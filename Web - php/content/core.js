@@ -12,7 +12,7 @@ var friends = [];
 var friendMessages = [];
 var status = 0;
 
-function DisplayPage() {
+function StartHeartBeat() {
 	heartbeatTimer = setInterval(function () {
             LoadData();
         }, heartbeatInterval);
@@ -34,8 +34,6 @@ function LoadData() {
 }
 
 function SendCommand(type, message) {
-    //message = message || "";
-    //message = '{"To":"STEAM_0:1:20189445","Message":"Hi"}'; //HOLY MOTHER TESTING
     dataString = 'type=' + type + "&message=" + message;
 
     $.ajax({
@@ -53,6 +51,14 @@ function SendCommand(type, message) {
     });
 }
 
+function SendChatMessage(type, message, to) {
+    var messageArray = {};
+    messageArray["To"] = to;
+    messageArray["Message"] = message;
+    var messageJson = JSON.stringify(messageArray);
+    SendCommand(type, messageJson);
+}
+
 function Redirect(redirectLocation) {
 	$.mobile.changePage( redirectLocation, {
 		transition: "slide",
@@ -63,11 +69,4 @@ function Redirect(redirectLocation) {
 function Logout() {
 	clearInterval(heartbeatTimer);
 	Redirect(logoutUrl);
-}
-
-function ParseFriends(msg) {
-    for (friendID in msg) {
-        var friend = msg[friendID];
-        friends[friend.SID] = friend;
-    }
 }

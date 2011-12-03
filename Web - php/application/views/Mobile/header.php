@@ -15,6 +15,7 @@
 
     <script type="text/javascript" src="<?php echo site_url('content/core.js') ?>"></script>
     <script type="text/javascript" src="<?php echo site_url('content/mobile.js') ?>"></script>
+    <script type="text/javascript" src="<?php echo site_url('content/json2.js') ?>"></script>
 
     <meta content='True' name='HandheldFriendly' />
 	<meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />

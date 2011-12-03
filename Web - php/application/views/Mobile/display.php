@@ -15,6 +15,7 @@
             <div id="reply">Loading data....</div>
 
             <div data-role="controlgroup">
+                <a href="javascript: SendChatMessage(2, 'This is a test message', 'STEAM_0:1:20189445');" data-role="button">Test button</a>
                 <a href="javascript: StatePage();" data-role="button">Change state</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">View community profile</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">Settings</a>

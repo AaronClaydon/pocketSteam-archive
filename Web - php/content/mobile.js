@@ -3,7 +3,7 @@ function LoginPage() {
 		if(typeof(heartbeatTimer) !== 'undefined') {
 			clearInterval(heartbeatTimer); //Incase for some reason it didn't end (IT HAPPENS)
 		}
-		$("#loginButton").click(function() { 
+		$("#loginForm").submit(function() { 
 			DisableTextBoxes();
 			$("#loginMessage").removeClass();
 			$("#loginMessage").addClass("loginNotice");
@@ -23,7 +23,10 @@ function LoginPage() {
 	                
 	                if(splitData[0] == "Success") {
 	                	window.location = displayUrl;
-
+	                } else if(splitData[0] == "MissingField") {
+	                	$("#loginMessage").removeClass();
+	                	$("#loginMessage").addClass("loginError");
+						$("#loginMessage").text('Please fill in all fields.');
 	                } else if(splitData[0] == "pocketSteamOffline") {
 	                	$("#loginMessage").removeClass();
 	                	$("#loginMessage").addClass("loginError");
@@ -88,20 +91,11 @@ function ParseData(data) {
     		userData = msg;
     		UpdateInfo();
     	} else if(msgType == 2) {
-    		if(friendMessages[msg.SID] == undefined) {
-    			friendMessages[msg.SID] = "";
-    		}
-    		friendMessages[msg.SID] = friendMessages[msg.SID] + "<strong>" + msg.N + "</strong>: " + msg.M + "<br />";
-    		UpdateChat();
+    		AddToChat(msg.SID, "<strong>" + msg.N + "</strong>: " + msg.M);
 	    } else if(msgType == 3) {
-	    	if(friendMessages[msg.SID] == undefined) {
-    			friendMessages[msg.SID] = [];
-    		}
-    		friendMessages[msg.SID] = friendMessages[msg.SID] + "<strong>" + msg.N + "</strong><i> " + msg.M + "</i><br />";
-    		UpdateChat();
+			AddToChat(msg.SID, "<strong>" + msg.N + "</strong><i> " + msg.M + "</i>");
     	} else if(msgType == 4) {
-    		friends = msg;
-    		UpdateFriends();
+    		UpdateFriends(msg);
     		UpdateChat();
     	} else if (msgType == 5) {
     		$("#globalMessages").append('<div class="info">' + msg.GM + '</div>');
@@ -109,11 +103,44 @@ function ParseData(data) {
     }
 }
 
-function UpdateInfo() {
-	$("#reply").html(FormatUserBar(userData));
+function AddToChat(steamid, message) {
+	if(friendMessages[steamid] == undefined) {
+    	friendMessages[steamid] = "";
+    }
+    friendMessages[steamid] = friendMessages[steamid] + message + "<br />";
+    UpdateChat();
 }
 
-function UpdateFriends() {
+function DisplayPage() {
+	StartHeartBeat();
+}
+
+function UpdateInfo() {
+	$("#reply").html(FormatUserBar(userData, "", true));
+}
+
+function UpdateFriends(newFriends) {
+	for (oldFriendID in friends) {
+		var oldFriend = friends[oldFriendID];
+		
+		if(friendMessages[oldFriend.SID] != undefined) {
+			for (newFriendID in newFriends) {
+				var newFriend = newFriends[newFriendID];
+				if(oldFriend.SID == newFriend.SID) {
+					if(oldFriend.N != newFriend.N) {
+						AddToChat(newFriend.SID, "<strong>" + oldFriend.N + " is now called " + newFriend.N + "</strong>");
+					}
+					if(oldFriend.St != newFriend.St) {
+						AddToChat(newFriend.SID, "<strong>" + newFriend.N + " is now " + newFriend.St + "</strong>");
+					}
+					
+					break;
+				}
+			}
+		}
+	}
+	friends = newFriends;
+
 	if ($("div[data-url='Friends']").length > 0) {
 		var friendsHTML = FormatFriends();
 		$("div[data-url='Friends'] .displayContent").html(friendsHTML);
@@ -132,9 +159,8 @@ function UpdateChat() {
 			}
 		}
 		var friend = friends[arrayID];
-
-		var chatPage = FormatUserBar(friend) + "<hr />" + friendMessages[steamID] + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="button" data-theme="b">Send</button></form>';
-		$("div[data-url='Chat'] .displayContent").html(chatPage);
+		$("div[data-url='Chat'] .displayContent .friend").html(FormatUserBar(friend, "", false));
+		$("div[data-url='Chat'] .displayContent .chatMessages").html(friendMessages[steamID]);
 	}
 }
 
@@ -144,14 +170,16 @@ function FormatFriends() {
 	for (friendID in friends) {
 		var friend = friends[friendID];
 
-		friendsList = friendsList + FormatUserBar(friend, 'onclick="ChatPage(\'' + friend.SID + '\');"');
+		friendsList = friendsList + FormatUserBar(friend, 'onclick="ChatPage(\'' + friend.SID + '\');"', true);
 	}
 
 	return friendsList;
 }
 
-function FormatUserBar(friend, onclick) {
+function FormatUserBar(friend, onclick, hasDiv) {
 	var onclick = onclick || "";
+	var hasDiv = hasDiv || false;
+
 	var avatarState = "offline";
 	if (friend['StID'] == 1) {
         avatarState = "ingame";
@@ -159,7 +187,11 @@ function FormatUserBar(friend, onclick) {
 		avatarState = "online";
     }
 
-    return '<div class="friend" ' + onclick + '><img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span></div>';
+    if(hasDiv) {
+    	return '<div class="friend" ' + onclick + '><img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span></div>';
+    } else {
+    	return '<img src="' + friend['A'] + '" alt="Avatar" class="steam_' + avatarState + '"> ' + friend['N'] + ' - <span>' + friend['St'] + '</span>';
+    }
 }
 
 function FriendsPage() {
@@ -208,15 +240,35 @@ function ChatPage(steamID) {
 		}
 	}
 	var friend = friends[arrayID];
-	var chatMessages = "";
+	var chatMessages = "<div class='chatMessages'>";
 
 	if(friendMessages[steamID] != undefined) {
-		chatMessages = friendMessages[steamID];
+		chatMessages = chatMessages + friendMessages[steamID];
 	}
+	chatMessages = chatMessages + "</div>";
 
-	var chatPage = FormatUserBar(friend) + "<hr />" + chatMessages + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="button" data-theme="b">Send</button></form>';
+	var chatPage = FormatUserBar(friend, "", true) + "<hr />" + chatMessages + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="submit" data-theme="b" id="chatButton">Send</button></form>';
 	ChangePage('Chat', chatPage);
 	$("div[data-url='Chat']").attr('data-steamID', friend.SID);
+
+	$(".chatForm").submit(function() {
+		if ($("#chatMessage").val().match(/^\s+$/) === null && $("#chatMessage").val() != "") {
+			var steamID = $("div[data-url='Chat']").attr('data-steamID');
+			var message = $("#chatMessage").val();
+			var messageArray = message.split(' ');
+			$("#chatMessage").val('');
+			
+			if(messageArray[0] == "/me") {
+				message = message.replace('/me ', '');
+				AddToChat(steamID, "<strong>" + userData.N + "</strong> <i>" + message + "</i>");
+				SendChatMessage(3, message, steamID);
+			} else {
+				AddToChat(steamID, "<strong>" + userData.N + "</strong>: " + message);
+				SendChatMessage(2, message, steamID);
+			}
+		}
+		return false;
+	});
 }
 
 function ChangePage(title, html, theme) {

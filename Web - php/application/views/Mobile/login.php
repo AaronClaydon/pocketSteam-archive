@@ -29,7 +29,7 @@
                     <input type="text" name="steamGuardKey" id="steamGuardKey" value=""/>
                 </div>  
 
-                <button type="button" data-theme="b" id="loginButton">Login to Steam</button>
+                <button type="submit" data-theme="b" id="loginButton">Login to Steam</button>
             </form>
         </div>
     </div>
