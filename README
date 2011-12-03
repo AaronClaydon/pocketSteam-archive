@@ -1,4 +1,9 @@
-pocketSteam
+pocketSteam - An open source web layer for the Steam chat system 
 
-- Android and Web project are no longer being worked on
-- Website is now in Web - php
+Functions:
+ - Chat with Steam Friends
+ - View community profiles
+ - Usable on most modern mobile browsers
+ - Mobile & dsesktop/tablet friendly designs
+
+ I'd also like to apologise on the state of my code and lack of commenting, I never really expected to release this.
