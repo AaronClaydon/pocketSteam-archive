@@ -90,4 +90,6 @@
 
 .chatMessages {
 	word-wrap: break-word;
+	overflow: scroll;
+	overflow-x: hidden;
 }

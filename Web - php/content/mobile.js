@@ -109,6 +109,8 @@ function AddToChat(steamid, message) {
     }
     friendMessages[steamid] = friendMessages[steamid] + message + "<br />";
     UpdateChat();
+
+	$("div[data-url='Chat'] .displayContent .chatMessages").scrollTop($("div[data-url='Chat'] .displayContent .chatMessages")[0].scrollHeight);
 }
 
 function DisplayPage() {
@@ -196,7 +198,6 @@ function FormatUserBar(friend, onclick, hasDiv) {
 
 function FriendsPage() {
 	var html = '' + FormatFriends();
-
 	ChangePage('Friends', html);
 }
 
@@ -206,7 +207,7 @@ function StatePage() {
 }
 
 function LogoutPage() {
-	var html = 'Are you sure you want to logout? <a href="javascript: Logout();" data-role="button">Yes</a><a href="index.html" data-role="button" data-rel="back">No</a>';
+	var html = 'Are you sure you want to logout? <div data-role="controlgroup"><a href="javascript: Logout();" data-role="button">Yes</a><a href="index.html" data-role="button" data-rel="back">No</a></div>';
 	ChangePage('Logout', html, 'd');
 }
 
@@ -247,9 +248,20 @@ function ChatPage(steamID) {
 	}
 	chatMessages = chatMessages + "</div>";
 
-	var chatPage = FormatUserBar(friend, "", true) + "<hr />" + chatMessages + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="50"/><button type="submit" data-theme="b" id="chatButton">Send</button></form>';
+	var inputSize;
+	if($(window).width() >= 600) {
+		inputSize = 60;
+	} else {
+		inputSize = parseInt($(window).width() / 10);
+	}
+	var chatPage = FormatUserBar(friend, "", true) + "<hr />" + chatMessages + '<form action="#" method="post" class="chatForm"><input type="text" name="chatMessage" id="chatMessage" size="' + inputSize + '"/></form>'; //<button type="submit" data-theme="b" data-icon="arrow-l" data-iconpos="notext" id="chatButton"></button>
 	ChangePage('Chat', chatPage);
 	$("div[data-url='Chat']").attr('data-steamID', friend.SID);
+
+	chatFormHeight = $('.chatForm').height(), 
+	remainingHeight = parseInt($(window).height() - 151 - chatFormHeight); 
+	$('.chatMessages').height(remainingHeight); 
+	$("div[data-url='Chat'] .displayContent .chatMessages").scrollTop($("div[data-url='Chat'] .displayContent .chatMessages")[0].scrollHeight);
 
 	$(".chatForm").submit(function() {
 		if ($("#chatMessage").val().match(/^\s+$/) === null && $("#chatMessage").val() != "") {

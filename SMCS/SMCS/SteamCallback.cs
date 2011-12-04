@@ -76,7 +76,6 @@ namespace SMCS
                 }
                 else
                 {
-                    //Dictionary<String, SteamUserData> friends = new Dictionary<string, SteamUserData>();
                     List<SteamUserData> friends = new List<SteamUserData>();
 
                     for (int i = 0; i < Steam3.SteamFriends.GetFriendCount(); i++)
@@ -119,6 +118,12 @@ namespace SMCS
                         }
                         else
                             playerState = Steam3.SteamFriends.GetFriendPersonaState(friendID).ToString();
+
+                        if (Steam3.SteamFriends.GetFriendRelationship(friendID) == EFriendRelationship.Blocked)
+                        {
+                            playerState = "Blocked";
+                            stateID = 6;
+                        }
 
                         string steamName = Steam3.SteamFriends.GetFriendPersonaName(friendID);
                         if (steamName.Length > 22)

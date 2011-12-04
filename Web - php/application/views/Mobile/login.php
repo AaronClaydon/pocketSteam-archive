@@ -16,12 +16,12 @@
             <form action="<?= site_url('main/login') ?>" method="post" id="loginForm">
                 <div data-role="fieldcontain">
                     <label for="name">Username:</label><br />
-                    <input type="text" name="userName" id="userName" value="azzytest"/>
+                    <input type="text" name="userName" id="userName" />
                 </div> 
                 
                 <div data-role="fieldcontain">
                     <label for="name">Password:</label><br />
-                    <input type="password" name="passWord" id="passWord" value="testing123"/>
+                    <input type="password" name="passWord" id="passWord" />
                 </div>  
 
                 <div data-role="fieldcontain" class="hidden">

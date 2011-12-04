@@ -1,8 +1,8 @@
-var loginUrl = "index.php/main/login";
-var displayUrl = "index.php/main/display";
-var loadDataUrl = "/pocketsteam/index.php/main/heartbeat";
-var logoutUrl = "/pocketsteam/index.php/main/logout";
-var sendCommandUrl = "/pocketsteam/index.php/main/sendmessage";
+var loginUrl = "main/login";
+var displayUrl = "main/display";
+var loadDataUrl = "/pocketsteam/main/heartbeat";
+var logoutUrl = "/pocketsteam/main/logout";
+var sendCommandUrl = "/pocketsteam/main/sendmessage";
 
 var heartbeatTimer;
 var heartbeatInterval = 1500;

@@ -7,6 +7,7 @@
     <div data-role="header">
         <a href="javascript: FriendsPage();" data-role="button">Friends</a>
         <h1>Info</h1>
+        <a href="<?= site_url('main/faq') ?>" data-rel="dialog" data-icon="alert"><span class="ui-li-count ui-btn-up-c ui-btn-corner-all">2</span></a>
     </div>
 
     <div data-role="content">
@@ -15,7 +16,6 @@
             <div id="reply">Loading data....</div>
 
             <div data-role="controlgroup">
-                <a href="javascript: SendChatMessage(2, 'This is a test message', 'STEAM_0:1:20189445');" data-role="button">Test button</a>
                 <a href="javascript: StatePage();" data-role="button">Change state</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">View community profile</a>
                 <a href="javascript: alert('Not implemented');" data-role="button">Settings</a>
